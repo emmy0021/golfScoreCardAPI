@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Golf Scorecard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style>
+      /* CSS styles remain the same */
+
+      body {
+          font-family: Arial, sans-serif;
+          background-color: #f2f7fc;
+        }
+  
+        .container {
+          max-width: 100%;
+          overflow-x: auto;
+          padding: 10px;
+        }
+  
+        table {
+          width: auto;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+  
+        th,
+        td {
+          padding: 12px;
+          text-align: center;
+          font-size: 18px;
+        }
+  
+        th {
+          background-color: #e3f2fd;
+          color: #00539c;
+        }
+  
+        td {
+          background-color: #f7fbff;
+          color: #00539c;
+        }
+  
+        .player-col {
+          position: sticky;
+          left: 0;
+          z-index: 1;
+          background-color: #fff;
+          font-size: 18px;
+          padding: 12px;
+        }
+
+        .player-col:last-child {
+            background-color: #9dc8d6;
+            border-radius: 0 0 10px 10px;
+            color: #fff;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+
+        .player-col:last-child:hover {
+            background-color: #95cbee;
+        }
+  
+        .total-score-col {
+          background-color: #e3f2fd;
+          color: #00539c;
+          font-weight: bold;
+        }
+  
+        input {
+          width: 70px;
+          padding: 4px;
+          border: none;
+          text-align: center;
+          background-color: #eff6fc;
+          color: #00539c;
+          font-weight: bold;
+          font-size: 38px;
+          border-radius: 4px;
+          box-sizing: border-box;
+        }
+  
+        input:focus {
+          outline: none;
+          background-color: #d2e3f8;
+        }
+
+
+      .scorecard-container {
+        overflow-x: auto;
+      }
+
+      .table-container {
+        width: fit-content;
+      }
+
+      /* Add a wrapper div to prevent scores from overflowing to the left */
+      .player-wrapper {
+        position: relative;
+      }
+
+      /* Position player names and scores within the wrapper div */
+      .player-col,
+      td:not(.player-col) input[type="number"],
+      .total-score-col {
+        position: sticky;
+        left: 0;
+        background-color: lightblue;
+      }
+
+      /* Make the score cells sticky */
+      .sticky {
+        position: sticky;
+        right: 0;
+        z-index: 1;
+      }
+
+      /* Hide the horizontal scrollbar on mobile devices */
+      @media (max-width: 600px) {
+        .scorecard-container {
+          overflow-x: scroll;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .table-container {
+          width: 100%;
+        }
+
+        
+      }
+
+      .toggle-button {
+        text-align: right;
+        margin-top: 10px;
+        position: relative;
+        top: -66px;
+      }
+
+      /* Customize the toggle switch appearance */
+      .toggle-button label {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      .toggle-button label input {
+        display: none;
+      }
+
+      .toggle-button label span {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: background-color 0.3s ease;
+        border-radius: 34px;
+      }
+
+      .toggle-button label span:before {
+        position: absolute;
+        content: '';
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: transform 0.3s ease;
+        border-radius: 50%;
+      }
+
+      .toggle-button label input:checked + span {
+        background-color: lightblue;
+      }
+
+      .toggle-button label input:checked + span:before {
+        transform: translateX(26px);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="scorecard-container">
+      <div class="table-container">
+        <table>
+          <!-- Rest of the table remains the same -->
+          <thead>
+            <tr>
+              <th class="player-col"></th>
+              <th>Hole 1</th>
+              <th>Hole 2</th>
+              <th>Hole 3</th>
+              <th>Hole 4</th>
+              <th>Hole 5</th>
+              <th>Hole 6</th>
+              <th>Hole 7</th>
+              <th>Hole 8</th>
+              <th>Hole 9</th>
+              <th class="total-score-col">Total Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="player-col">Player 1</td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td class="total-score-col">0</td>
+            </tr>
+            <tr>
+              <td class="player-col">Player 2</td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td class="total-score-col">0</td>
+            </tr>
+            <tr>
+              <td class="player-col">Player 3</td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
+              <td class="total-score-col">0</td>
+            </tr>
+            <tr>
+                <td class="player-col" onclick="addPlayer()">+</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="toggle-button">
+        <label>
+        <input type="checkbox" id="score-sticky-toggle">
+            <span></span>
+        </label>
+    </div>
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+              const scoreStickyToggle = document.getElementById('score-sticky-toggle');
+              const scoreCells = document.querySelectorAll('.total-score-col');
+          
+              scoreStickyToggle.addEventListener('change', () => {
+                if (scoreStickyToggle.checked) {
+                  scoreCells.forEach((cell) => {
+                    cell.classList.add('sticky');
+                  });
+                } else {
+                  scoreCells.forEach((cell) => {
+                    cell.classList.remove('sticky');
+                  });
+                }
+              });
+
+              const scoreInputs = document.querySelectorAll('tbody input');
+  
+          scoreInputs.forEach((input) => {
+            input.addEventListener('input', calculateTotalScore);
+          });
+  
+          function calculateTotalScore() {
+            const rows = document.querySelectorAll('tbody tr');
+  
+            rows.forEach((row) => {
+              const scores = Array.from(row.querySelectorAll('input'))
+                .map((input) => parseInt(input.value))
+                .filter((score) => !isNaN(score));
+  
+              const totalScore = scores.reduce((total, score) => total + score, 0);
+              const totalScoreCell = row.querySelector('.total-score-col');
+              totalScoreCell.textContent = totalScore;
+            });
+          }
+          
+            });
+
+            document.addEventListener('click', function(event) {
+              var numberInput = document.getElementById('number-input');
+              if (event.target !== numberInput) {
+                numberInput.blur();
+              }
+            });
+
+            function addPlayer() {
+
+            }
+
+
+          </script>
+        </body>
+        </html>    
