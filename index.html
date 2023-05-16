@@ -52,7 +52,7 @@
 
         .player-col:last-child {
             background-color: #9dc8d6;
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 0 10px;
             color: #fff;
             cursor: pointer;
             margin-right: 10px;
@@ -257,6 +257,11 @@
         left: 6px;
         }
 
+        .switch-button span.arrow-left.hide-after::after,
+        .switch-button span.arrow-right.hide-after::after,
+.switch-button span.arrow.hide-after::after {
+  display: none;
+}
     
   .player-col::after {
     content: "";
@@ -418,7 +423,6 @@ let parentCols = [];
 
 // Elements
 const resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
-const arrowElement = document.querySelector('.switch-button span.arrow');
 const swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
 
 // Event listeners
@@ -426,6 +430,7 @@ resizeTabs.forEach(resizeTab => {
   resizeTab.addEventListener('mousedown', initResize, false);
   resizeTab.addEventListener('touchstart', initResize, false);
 });
+
 document.addEventListener('mousemove', resizeTable, false);
 document.addEventListener('touchmove', resizeTable, false);
 document.addEventListener('mouseup', stopResize, false);
@@ -449,19 +454,19 @@ function resizeTable(e) {
 
   for (let i = 0; i < parentCols.length; i++) {
     const newWidth = startWidth[i] + deltaX;
-    if (newWidth > 45 && newWidth < 200) {
+    if (newWidth > 35 && newWidth < 200) {
       parentCols[i].style.width = newWidth + 'px';
+      if (newWidth < 120) {
+            swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
+            if (newWidth < 70) {
+                swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right hide-after">';
+            }
+        } else {
+            swtchHolesButton.innerHTML = 'Holes<br>10-18<span class="arrow arrow-right">';
+        }
     }
   }
 
- 
-  if (arrowElement) {
-    if (parentCols[0].offsetWidth < 120) {
-      swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
-    } else {
-      swtchHolesButton.innerHTML = 'Holes<br>10-18<span class="arrow arrow-right">';
-    }
-  }
 }
 
 function stopResize() {
