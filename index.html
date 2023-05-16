@@ -419,6 +419,7 @@ let parentCols = [];
 // Elements
 const resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
 const arrowElement = document.querySelector('.switch-button span.arrow');
+const swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
 
 // Event listeners
 resizeTabs.forEach(resizeTab => {
@@ -448,17 +449,17 @@ function resizeTable(e) {
 
   for (let i = 0; i < parentCols.length; i++) {
     const newWidth = startWidth[i] + deltaX;
-    if (newWidth > 69 && newWidth < 200) {
+    if (newWidth > 45 && newWidth < 200) {
       parentCols[i].style.width = newWidth + 'px';
     }
   }
 
-  const threshold = 120;
+ 
   if (arrowElement) {
-    if (parentCols[0].offsetWidth < threshold) {
-      arrowElement.style.visibility = 'hidden';
+    if (parentCols[0].offsetWidth < 120) {
+      swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
     } else {
-      arrowElement.style.visibility = 'visible';
+      swtchHolesButton.innerHTML = 'Holes<br>10-18<span class="arrow arrow-right">';
     }
   }
 }
