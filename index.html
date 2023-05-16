@@ -435,7 +435,6 @@ let startWidth = [];
 let parentCols = [];
 let editNamesEnabled = true;
 
-
 // Elements
 const resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
 const swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
@@ -467,6 +466,7 @@ function resizeTable(e) {
   if (!isResizing) return;
   const deltaX = (e.clientX || e.touches[0].clientX) - startX;
 
+
   for (let i = 0; i < parentCols.length; i++) {
     const newWidth = startWidth[i] + deltaX;
     if (newWidth > 35 && newWidth < 200) {
@@ -484,7 +484,6 @@ function resizeTable(e) {
             maximizeNames();
             editNamesEnabled = true;
         }
-        console.log(editNamesEnabled +" s: " + startWidth[i] + "+" + deltaX);
     }
   }
 
@@ -496,54 +495,77 @@ function stopResize() {
 
 parentColsNames = [];
 const playerCols = document.querySelectorAll('.player-col');
-
+let selectedPlayerCol = null;
+let ignoreClick = [];
 
 playerCols.forEach((playerCol, index) => {
     parentColsNames.push(playerCol.textContent.trim());
     if (index !== 0 && index !== playerCols.length - 1) {
-    // Add click event listener
-    playerCol.addEventListener('click', () => {
-      // Check if an input element already exists
-      console.log("click: " + editNamesEnabled);
-      if (editNamesEnabled) {
-            const existingInput = playerCol.querySelector('input');
-            if (existingInput) {
-                // Focus on the existing input element
-                existingInput.focus();
-                return;
-            }
-
-            // Get the current content of the player-col
-            const content = playerCol.textContent.trim();
-
-            // Create an input element
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = content;
-
-            // Replace the player-col content with the input element
-            playerCol.innerHTML = '';
-            playerCol.appendChild(input);
-
-            // Focus on the input element
-            input.focus();
-
-            // Add blur event listener to handle the input blur (when it loses focus)
-            input.addEventListener('blur', () => {
-                // Get the updated value from the input element
-                const updatedValue = input.value.trim();
-
-                // Replace the input element with the updated value
-                playerCol.innerHTML = updatedValue !== '' ? updatedValue : '-';
-
-                // Update the corresponding name in parentColsNames
-                parentColsNames[index] = updatedValue;
-        
-            });
-        }
-    });
+        playerCol.addEventListener('click', handleClick);
+        playerCol.addEventListener('touchstart', handleTouch);
   }
 })
+
+
+
+function handleClick() {
+  handlePlayerColEvent(this);
+}
+
+function handleTouch(event) {
+  event.preventDefault();
+  handlePlayerColEvent(this);
+}
+
+function handlePlayerColEvent(playerCol) {
+  if (editNamesEnabled) {
+    if (selectedPlayerCol === playerCol) {
+      activateEditMode(playerCol);
+    } else {
+      if (selectedPlayerCol) {
+        selectedPlayerCol.classList.remove('selected');
+      }
+      selectedPlayerCol = playerCol;
+      playerCol.classList.add('selected');
+    }
+  }
+}
+
+function activateEditMode(playerCol) {
+  const index = Array.from(playerCols).indexOf(playerCol);
+
+  if (ignoreClick[index]) {
+    return;
+  }
+  ignoreClick[index]=true;
+
+  const content = playerCol.textContent.trim();
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = content;
+
+  playerCol.innerHTML = '';
+  playerCol.appendChild(input);
+
+  input.focus();
+
+
+  input.addEventListener('blur', () => {
+    ignoreClick[index] = false;
+    const updatedValue = input.value.trim();
+
+    playerCol.innerHTML = updatedValue !== '' ? updatedValue : '-';
+
+    parentColsNames[index] = updatedValue;
+
+    playerCol.classList.remove('selected');
+    selectedPlayerCol = null;
+
+  });
+}
+
+
 function minimizeNames() {
 
   playerCols.forEach((playerCol, index) => {
@@ -555,11 +577,15 @@ function minimizeNames() {
                 .split(' ')
                 .map(word => word[0].toUpperCase())
                 .join('.');
-                playerCol.innerHTML = initials;
+                try {
+                    playerCol.innerHTML = initials;
+                }catch(error){}
                 parentColsNames.push(name);
             } else {
                 const initials = name.substring(0, 1).toUpperCase();
-                playerCol.innerHTML = initials;
+                try {
+                    playerCol.innerHTML = initials;
+                }catch(error){}
             }
         }
     }
@@ -579,7 +605,9 @@ function maximizeNames() {
         playerCol.innerHTML = words;
       } else {
         const name = initials;
-        playerCol.innerHTML = name;
+        try {
+            playerCol.innerHTML = name;
+        }catch(error){}
       }
     }
   });
