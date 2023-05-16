@@ -74,8 +74,8 @@
         }
   
         input {
-          width: 70px;
-          padding: 4px;
+          width: 78px;
+          padding: 6px;
           border: none;
           text-align: center;
           background-color: #eff6fc;
@@ -192,7 +192,7 @@
       .switch-button {
             background-color: #9dc8d6;
             color: #fff;
-            padding: 8px 16px;
+            padding: 8px 8px;
             border: none;
             border-radius: 10px 0 0 0;
             cursor: pointer;
@@ -231,12 +231,12 @@
 
         .switch-button span.arrow-left::before{
             border-right: 15px solid #fff;
-            left: 16px;
+            left: 2px;
         }
 
         .switch-button span.arrow-right::before {
         border-left: 15px solid #fff;
-        right: -8px;
+        right: 6px;
         }
 
 
@@ -249,14 +249,31 @@
         }
 
         .switch-button span.arrow-left::after {
-            right: -5px;
+            right: 9px;
         }
 
 
         .switch-button span.arrow-right::after {
-        left: 20px;
+        left: 6px;
         }
 
+    
+  .player-col::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -6px;
+    width: 10px;
+    height: 100%;
+    cursor: col-resize;
+    background-color: #ddd;
+  }
+
+  .player-col .switch-button {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
     </style>
   </head>
   <body>
@@ -266,8 +283,9 @@
           <!-- Rest of the table remains the same -->
           <thead>
             <tr>
+                
                 <th class="player-col">
-                    <button class="switch-button">Holes<br>10-18<span class="arrow arrow-left"></span></button>
+                    <button class="switch-button">Holes<br>10-18<span class="arrow arrow-right"></span></button>
                   </th>
                                    
               <th>Hole 1</th>
@@ -284,6 +302,7 @@
           </thead>
           <tbody>
             <tr>
+              
               <td class="player-col">Player 1</td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
@@ -297,6 +316,7 @@
               <td class="total-score-col">0</td>
             </tr>
             <tr>
+              
               <td class="player-col">Player 2</td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
@@ -310,6 +330,7 @@
               <td class="total-score-col">0</td>
             </tr>
             <tr>
+                
               <td class="player-col">Player 3</td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
@@ -323,6 +344,7 @@
               <td class="total-score-col">0</td>
             </tr>
             <tr>
+                
                 <td class="player-col" onclick="addPlayer()">+</td>
               </tr>
           </tbody>
@@ -386,6 +408,61 @@
 
             }
 
+
+
+
+            var isResizing = false;
+  var startX, startWidth, parentCols;
+
+  function initResize(e) {
+    var resizeTab = e.target.closest('.player-col');
+    if (resizeTab) {
+      isResizing = true;
+      startX = e.clientX;
+      parentCols = Array.from(document.querySelectorAll('.player-col, .switch-button'));
+      startWidth = parentCols.map(col => col.offsetWidth);
+    }
+  }
+
+  function resizeTable(e) {
+    if (!isResizing) return;
+    var deltaX = e.clientX - startX;
+    for (var i = 0; i < parentCols.length; i++) {
+      var newWidth = startWidth[i] + deltaX;
+      if (newWidth > 69 && newWidth < 200) {
+        parentCols[i].style.width = newWidth + 'px';
+
+        const threshold = 134;
+  const arrowElement = document.querySelector('.switch-button span.arrow');
+  if (arrowElement) {
+    if (newWidth < threshold) {
+      arrowElement.style.visibility = 'hidden';
+    } else {
+      arrowElement.style.visibility = 'visible';
+    }
+  }
+
+      }
+    }
+  }
+
+  function stopResize() {
+    isResizing = false;
+  }
+
+  // Add event listeners once the document is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    var resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
+    resizeTabs.forEach(resizeTab => {
+      resizeTab.addEventListener('mousedown', initResize, false);
+    });
+    document.addEventListener('mousemove', resizeTable, false);
+    document.addEventListener('mouseup', stopResize, false);
+  });
+
+            
+            
+            
 
           </script>
         </body>
