@@ -262,6 +262,12 @@
 .switch-button span.arrow.hide-after::after {
   display: none;
 }
+
+.switch-button span.arrow-left.hide-after::before,
+        .switch-button span.arrow-right.hide-after::before,
+.switch-button span.arrow.hide-after::before {
+    right: 28%;
+}
     
   .player-col::after {
     content: "";
@@ -308,7 +314,7 @@
           <tbody>
             <tr>
               
-              <td class="player-col">Player 1</td>
+              <td class="player-col">Alexis Marie</td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
@@ -322,7 +328,7 @@
             </tr>
             <tr>
               
-              <td class="player-col">Player 2</td>
+              <td class="player-col">John Smith </td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
@@ -336,7 +342,7 @@
             </tr>
             <tr>
                 
-              <td class="player-col">Player 3</td>
+              <td class="player-col">Emmanuel Oyervides</td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
               <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
@@ -460,9 +466,13 @@ function resizeTable(e) {
             swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
             if (newWidth < 70) {
                 swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right hide-after">';
+                minimizeNames();
+                    
             }
         } else {
             swtchHolesButton.innerHTML = 'Holes<br>10-18<span class="arrow arrow-right">';
+            maximizeNames();
+
         }
     }
   }
@@ -472,6 +482,54 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
 }
+
+parentColsNames = [];
+const playerCols = document.querySelectorAll('.player-col');
+
+playerCols.forEach((playerCol, index) => {
+    parentColsNames.push(playerCol.textContent.trim());
+})
+function minimizeNames() {
+
+  playerCols.forEach((playerCol, index) => {
+    if (index !== 0 && index !== playerCols.length - 1) {
+      const name = playerCol.textContent.trim();
+        if(!name.includes('.')){
+            if (name.includes(' ')) {
+                const initials = name
+                .split(' ')
+                .map(word => word[0].toUpperCase())
+                .join('.');
+                playerCol.innerHTML = initials;
+                parentColsNames.add(name);
+            } else {
+                const initials = name.substring(0, 1).toUpperCase();
+                playerCol.innerHTML = initials;
+            }
+        }
+    }
+  });
+}
+
+
+function maximizeNames() {
+  playerCols.forEach((playerCol, index) => {
+    if (index !== 0 && index !== playerCols.length - 1) {
+      const initials = parentColsNames[index];
+      if (initials.includes('.') && initials.length > 1) {
+        const words = initials
+          .split('.')
+          .map(word => word[0].toUpperCase() + word.slice(1))
+          .join(' ');
+        playerCol.innerHTML = words;
+      } else {
+        const name = initials;
+        playerCol.innerHTML = name;
+      }
+    }
+  });
+}
+
 
 
           </script>
