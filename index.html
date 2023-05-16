@@ -285,6 +285,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+input[type="text"] {
+  width: 90%;
+  font-size: 18px;
+}
+
+
     </style>
   </head>
   <body>
@@ -426,6 +433,8 @@ let isResizing = false;
 let startX = 0;
 let startWidth = [];
 let parentCols = [];
+let editNamesEnabled = true;
+
 
 // Elements
 const resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
@@ -462,18 +471,20 @@ function resizeTable(e) {
     const newWidth = startWidth[i] + deltaX;
     if (newWidth > 35 && newWidth < 200) {
       parentCols[i].style.width = newWidth + 'px';
-      if (newWidth < 120) {
-            swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
-            if (newWidth < 70) {
+      if (newWidth < 70) {
                 swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right hide-after">';
                 minimizeNames();
-                    
-            }
+                editNamesEnabled = false; 
+      }else if (newWidth < 120) {
+            swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
+            maximizeNames();
+            editNamesEnabled = true;
         } else {
             swtchHolesButton.innerHTML = 'Holes<br>10-18<span class="arrow arrow-right">';
             maximizeNames();
-
+            editNamesEnabled = true;
         }
+        console.log(editNamesEnabled +" s: " + startWidth[i] + "+" + deltaX);
     }
   }
 
@@ -486,8 +497,52 @@ function stopResize() {
 parentColsNames = [];
 const playerCols = document.querySelectorAll('.player-col');
 
+
 playerCols.forEach((playerCol, index) => {
     parentColsNames.push(playerCol.textContent.trim());
+    if (index !== 0 && index !== playerCols.length - 1) {
+    // Add click event listener
+    playerCol.addEventListener('click', () => {
+      // Check if an input element already exists
+      console.log("click: " + editNamesEnabled);
+      if (editNamesEnabled) {
+            const existingInput = playerCol.querySelector('input');
+            if (existingInput) {
+                // Focus on the existing input element
+                existingInput.focus();
+                return;
+            }
+
+            // Get the current content of the player-col
+            const content = playerCol.textContent.trim();
+
+            // Create an input element
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = content;
+
+            // Replace the player-col content with the input element
+            playerCol.innerHTML = '';
+            playerCol.appendChild(input);
+
+            // Focus on the input element
+            input.focus();
+
+            // Add blur event listener to handle the input blur (when it loses focus)
+            input.addEventListener('blur', () => {
+                // Get the updated value from the input element
+                const updatedValue = input.value.trim();
+
+                // Replace the input element with the updated value
+                playerCol.innerHTML = updatedValue !== '' ? updatedValue : '-';
+
+                // Update the corresponding name in parentColsNames
+                parentColsNames[index] = updatedValue;
+        
+            });
+        }
+    });
+  }
 })
 function minimizeNames() {
 
@@ -501,7 +556,7 @@ function minimizeNames() {
                 .map(word => word[0].toUpperCase())
                 .join('.');
                 playerCol.innerHTML = initials;
-                parentColsNames.add(name);
+                parentColsNames.push(name);
             } else {
                 const initials = name.substring(0, 1).toUpperCase();
                 playerCol.innerHTML = initials;
