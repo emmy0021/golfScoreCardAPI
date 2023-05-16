@@ -62,6 +62,10 @@
         .player-col:last-child:hover {
             background-color: #95cbee;
         }
+
+        thead tr th.player-col:first-child {
+            border-radius: 10px 0 0 0;
+        }
   
         .total-score-col {
           background-color: #e3f2fd;
@@ -182,6 +186,77 @@
         transform: translateX(26px);
       }
 
+
+
+
+      .switch-button {
+            background-color: #9dc8d6;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 10px 0 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+
+
+            
+        .switch-button span.arrow {
+        margin-left: 8px;
+        width: 40px;
+        height: 20px;
+        display: inline-block;
+        background-color: #9dc8d6;
+        position: relative;
+        }
+
+
+        .switch-button span.arrow::before,
+        .switch-button span.arrow::after {
+        content: "";
+        position: absolute;
+        }
+
+
+        .switch-button span.arrow::before {
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        }
+
+        .switch-button span.arrow-left::before{
+            border-right: 15px solid #fff;
+            left: 16px;
+        }
+
+        .switch-button span.arrow-right::before {
+        border-left: 15px solid #fff;
+        right: -8px;
+        }
+
+
+        .switch-button span.arrow::after {
+        width: 6px;
+        height: 6px;
+        background-color: #fff;
+        top: 50%;
+        transform: translate(0, -50%);
+        }
+
+        .switch-button span.arrow-left::after {
+            right: -5px;
+        }
+
+
+        .switch-button span.arrow-right::after {
+        left: 20px;
+        }
+
     </style>
   </head>
   <body>
@@ -191,7 +266,10 @@
           <!-- Rest of the table remains the same -->
           <thead>
             <tr>
-              <th class="player-col"></th>
+                <th class="player-col">
+                    <button class="switch-button">Holes<br>10-18<span class="arrow arrow-left"></span></button>
+                  </th>
+                                   
               <th>Hole 1</th>
               <th>Hole 2</th>
               <th>Hole 3</th>
