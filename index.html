@@ -410,59 +410,63 @@
 
 
 
+// Variables
+let isResizing = false;
+let startX = 0;
+let startWidth = [];
+let parentCols = [];
 
-            var isResizing = false;
-  var startX, startWidth, parentCols;
+// Elements
+const resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
+const arrowElement = document.querySelector('.switch-button span.arrow');
 
-  function initResize(e) {
-    var resizeTab = e.target.closest('.player-col');
-    if (resizeTab) {
-      isResizing = true;
-      startX = e.clientX;
-      parentCols = Array.from(document.querySelectorAll('.player-col, .switch-button'));
-      startWidth = parentCols.map(col => col.offsetWidth);
+// Event listeners
+resizeTabs.forEach(resizeTab => {
+  resizeTab.addEventListener('mousedown', initResize, false);
+  resizeTab.addEventListener('touchstart', initResize, false);
+});
+document.addEventListener('mousemove', resizeTable, false);
+document.addEventListener('touchmove', resizeTable, false);
+document.addEventListener('mouseup', stopResize, false);
+document.addEventListener('touchend', stopResize, false);
+
+// Helper functions
+function initResize(e) {
+  e.preventDefault();
+  const resizeTab = e.target.closest('.player-col');
+  if (resizeTab) {
+    isResizing = true;
+    startX = e.clientX || e.touches[0].clientX;
+    parentCols = Array.from(document.querySelectorAll('.player-col, .switch-button'));
+    startWidth = parentCols.map(col => col.offsetWidth);
+  }
+}
+
+function resizeTable(e) {
+  if (!isResizing) return;
+  const deltaX = (e.clientX || e.touches[0].clientX) - startX;
+
+  for (let i = 0; i < parentCols.length; i++) {
+    const newWidth = startWidth[i] + deltaX;
+    if (newWidth > 69 && newWidth < 200) {
+      parentCols[i].style.width = newWidth + 'px';
     }
   }
 
-  function resizeTable(e) {
-    if (!isResizing) return;
-    var deltaX = e.clientX - startX;
-    for (var i = 0; i < parentCols.length; i++) {
-      var newWidth = startWidth[i] + deltaX;
-      if (newWidth > 69 && newWidth < 200) {
-        parentCols[i].style.width = newWidth + 'px';
-
-        const threshold = 134;
-  const arrowElement = document.querySelector('.switch-button span.arrow');
+  const threshold = 120;
   if (arrowElement) {
-    if (newWidth < threshold) {
+    if (parentCols[0].offsetWidth < threshold) {
       arrowElement.style.visibility = 'hidden';
     } else {
       arrowElement.style.visibility = 'visible';
     }
   }
+}
 
-      }
-    }
-  }
+function stopResize() {
+  isResizing = false;
+}
 
-  function stopResize() {
-    isResizing = false;
-  }
-
-  // Add event listeners once the document is fully loaded
-  document.addEventListener('DOMContentLoaded', function() {
-    var resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
-    resizeTabs.forEach(resizeTab => {
-      resizeTab.addEventListener('mousedown', initResize, false);
-    });
-    document.addEventListener('mousemove', resizeTable, false);
-    document.addEventListener('mouseup', stopResize, false);
-  });
-
-            
-            
-            
 
           </script>
         </body>
