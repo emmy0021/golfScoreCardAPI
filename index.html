@@ -312,7 +312,17 @@ input[type="text"] {
         </label>
     </div>
         <script>
-            function createTableHead() {
+            let isFinishedLoadingTable = false;
+
+            function createTableHead(isFirst9Holes = true) {
+                const theadExists = document.querySelector('thead');
+
+                if (theadExists) {
+                    const tableMain = theadExists.parentNode;
+
+                    tableMain.removeChild(theadExists);
+                }
+
                 // Create the <thead> element
                 const thead = document.createElement('thead');
 
@@ -323,12 +333,19 @@ input[type="text"] {
                 const playerColTh = document.createElement('th');
                 playerColTh.className = 'player-col';
                 playerColTh.innerHTML = `
-                    <button class="switch-button">Holes<br>10-18<span class="arrow arrow-right"></span></button>
+                <button class="switch-button" onclick="createTableHead(${isFirst9Holes ? 'false' : 'true'})">Holes<br>10-18<span class="arrow arrow-right"></span></button>
                 `;
                 tr.appendChild(playerColTh);
 
+                i_start = 1;
+                i_end = i_start+8;
+                if(!isFirst9Holes){
+                    i_start = 10;
+                    i_end = i_start+8;
+                }
+
                 // Create holes using a loop
-                for (let i = 1; i <= 9; i++) {
+                for (let i = i_start; i <= i_end; i++) {
                     const holeTh = document.createElement('th');
                     holeTh.textContent = `Hole ${i}`;
                     tr.appendChild(holeTh);
@@ -350,7 +367,11 @@ input[type="text"] {
 
                 // Insert the <thead> before the first child of the table
                 table.insertBefore(thead, table.firstChild);
+                if(isFinishedLoadingTable){
+                    initToggleSwitchHolesButtonEventListeners();
+                }
             }
+
             function insertPlayer(playerName, scoresArray) {
                 // Create the <tr> element
                 const tr = document.createElement('tr');
@@ -423,6 +444,7 @@ input[type="text"] {
 
                 table.appendChild(tfoot)
                 // Append the footer row to the tbody
+                isFinishedLoadingTable = true;
             }
 
 
@@ -525,7 +547,6 @@ let switchHolesToggle = true;
 
 function toggleSwitchHolesButton(){
     swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
-
     if(switchHolesToggle){
         holesMSGDefault = 'Holes<br>1-9<span class="arrow arrow-left">';
         holesMSGMedium = '<br><span class="arrow arrow-left">';
@@ -553,8 +574,12 @@ function toggleSwitchHolesButton(){
     switchHolesToggle = !switchHolesToggle;
 }
 
-
-swtchHolesButton.addEventListener('click',toggleSwitchHolesButton);
+function initToggleSwitchHolesButtonEventListeners(){
+    swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
+    swtchHolesButton.addEventListener('click',toggleSwitchHolesButton);
+    swtchHolesButton.addEventListener('touchstart',toggleSwitchHolesButton);
+}
+initToggleSwitchHolesButtonEventListeners();
 
 function initResizeEventListers(){
     resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
