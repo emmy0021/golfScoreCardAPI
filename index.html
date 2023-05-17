@@ -505,7 +505,7 @@ input[type="text"] {
             });
 
 
-
+           
 // Variables
 let isResizing = false;
 let startX = 0;
@@ -515,8 +515,46 @@ let editNamesEnabled = true;
 
 // Elements
 resizeTabs = null;
-const swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
+ swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
 
+let holesMSGDefault = 'Holes<br>10-18<span class="arrow arrow-right">';
+let holesMSGMedium = '<br><span class="arrow arrow-right">';
+let holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
+let holesMSGCaseNo = 0;
+let switchHolesToggle = true;
+
+function toggleSwitchHolesButton(){
+    swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
+
+    if(switchHolesToggle){
+        holesMSGDefault = 'Holes<br>1-9<span class="arrow arrow-left">';
+        holesMSGMedium = '<br><span class="arrow arrow-left">';
+        holesMSGShort = '<br><span class="arrow arrow-left hide-after">';
+    }else{
+
+        holesMSGDefault = 'Holes<br>10-18<span class="arrow arrow-right">';
+        holesMSGMedium = '<br><span class="arrow arrow-right">';
+        holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
+    }
+
+    holesMSGFinal = holesMSGDefault;
+    switch(holesMSGCaseNo){
+            case 3:
+                holesMSGFinal = holesMSGShort;
+                break;
+            case 2:
+                holesMSGFinal = holesMSGMedium;
+                break;
+            default:
+                holesMSGFinal = holesMSGDefault;
+    }
+    swtchHolesButton.innerHTML = holesMSGFinal;
+
+    switchHolesToggle = !switchHolesToggle;
+}
+
+
+swtchHolesButton.addEventListener('click',toggleSwitchHolesButton);
 
 function initResizeEventListers(){
     resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
@@ -557,17 +595,21 @@ function resizeTable(e) {
     if (newWidth > 35 && newWidth < 200) {
       parentCols[i].style.width = newWidth + 'px';
       if (newWidth < 70) {
-                swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right hide-after">';
+                swtchHolesButton.innerHTML = holesMSGShort;
                 minimizeNames();
                 editNamesEnabled = false; 
+                holesMSGCaseNo = 3;
       }else if (newWidth < 120) {
-            swtchHolesButton.innerHTML = '<br><span class="arrow arrow-right">';
+            swtchHolesButton.innerHTML = holesMSGMedium;
             maximizeNames();
             editNamesEnabled = true;
+            holesMSGCaseNo = 2;
+
         } else {
-            swtchHolesButton.innerHTML = 'Holes<br>10-18<span class="arrow arrow-right">';
+            swtchHolesButton.innerHTML = holesMSGDefault;
             maximizeNames();
             editNamesEnabled = true;
+            holesMSGCaseNo = 1;
         }
     }
   }
