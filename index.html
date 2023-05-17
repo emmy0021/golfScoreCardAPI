@@ -661,7 +661,27 @@ function resizeTable(e) {
 
 function stopResize() {
   isResizing = false;
+  const toggleButton = document.querySelector('.toggle-button');
+
+  switch(holesMSGCaseNo){
+            case 3:
+                setTableFooterVisibility(false);
+                toggleButton.style.top = '-21px';
+                break;
+            default:
+                setTableFooterVisibility(true);
+                toggleButton.style.top = '-66px';   
+    }
 }
+
+function setTableFooterVisibility(visible) {
+  const tableFooter = document.querySelector('tfoot');
+
+  if (tableFooter) {
+    tableFooter.style.display = visible ? '' : 'none';
+  }
+}
+
 
 parentColsNames = [];
 playerCols = document.querySelectorAll('.player-col');
