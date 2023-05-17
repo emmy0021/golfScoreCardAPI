@@ -407,6 +407,8 @@ input[type="text"] {
                     insertPlayer('player');
                     addPlayerColListeners();
                     initResizeEventListers();
+                    initScoreInputsEventListeners();
+                    initStickyScore();
                 };
 
                 // Append the footer cell to the footer row
@@ -437,30 +439,8 @@ input[type="text"] {
 
             scoreStickyToggle = document.getElementById('score-sticky-toggle');
 
-            window.addEventListener('DOMContentLoaded', () => {
-              scoreStickyToggle = document.getElementById('score-sticky-toggle');
-          
-              scoreStickyToggle.addEventListener('change', () => {
-                scoreCells = document.querySelectorAll('.total-score-col');
-
-                if (scoreStickyToggle.checked) {
-                  scoreCells.forEach((cell) => {
-                    cell.classList.add('sticky');
-                  });
-                } else {
-                  scoreCells.forEach((cell) => {
-                    cell.classList.remove('sticky');
-                  });
-                }
-              });
-
-              const scoreInputs = document.querySelectorAll('tbody input');
-  
-          scoreInputs.forEach((input) => {
-            input.addEventListener('input', calculateTotalScore);
-          });
-  
-          function calculateTotalScore() {
+            
+            function calculateTotalScore() {
             const rows = document.querySelectorAll('tbody tr');
   
             rows.forEach((row) => {
@@ -470,11 +450,52 @@ input[type="text"] {
   
               const totalScore = scores.reduce((total, score) => total + score, 0);
               const totalScoreCell = row.querySelector('.total-score-col');
-              try{totalScoreCell.textContent = totalScore}catch(error){}
+              totalScoreCell.textContent = totalScore;
             });
-          }
-          calculateTotalScore();
+          
+        }
+          
+
+          function initScoreInputsEventListeners(){
+                scoreInputs = document.querySelectorAll('tbody input');
+  
+                scoreInputs.forEach((input) => {
+                    input.addEventListener('input', calculateTotalScore);
+                });
+
+              }
+
+              function initStickyScore(){
+                scoreCells = document.querySelectorAll('.total-score-col');
+
+                if (scoreStickyToggle.checked) {
+                scoreCells.forEach((cell) => {
+                    cell.classList.add('sticky');
+                });
+                } else {
+                scoreCells.forEach((cell) => {
+                    cell.classList.remove('sticky');
+                });
+                }
+              }
+
+            window.addEventListener('DOMContentLoaded', () => {
+              scoreStickyToggle = document.getElementById('score-sticky-toggle');
+          
+              scoreStickyToggle.addEventListener('change', () => {
+                initStickyScore();
+              });
+
+              
+
+              initScoreInputsEventListeners();
+
+
+            calculateTotalScore();
+
+
             });
+            
 
             document.addEventListener('click', function(event) {
               var numberInput = document.getElementById('number-input');
