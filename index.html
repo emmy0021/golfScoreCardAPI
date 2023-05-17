@@ -267,6 +267,7 @@
         .switch-button span.arrow-right.hide-after::before,
 .switch-button span.arrow.hide-after::before {
     right: 28%;
+    left: auto;
 }
     
   .player-col::after {
@@ -298,74 +299,9 @@ input[type="text"] {
     <div class="scorecard-container">
       <div class="table-container">
         <table>
-          <!-- Rest of the table remains the same -->
-          <thead>
-            <tr>
+            <tbody>
                 
-                <th class="player-col">
-                    <button class="switch-button">Holes<br>10-18<span class="arrow arrow-right"></span></button>
-                  </th>
-                                   
-              <th>Hole 1</th>
-              <th>Hole 2</th>
-              <th>Hole 3</th>
-              <th>Hole 4</th>
-              <th>Hole 5</th>
-              <th>Hole 6</th>
-              <th>Hole 7</th>
-              <th>Hole 8</th>
-              <th>Hole 9</th>
-              <th class="total-score-col">Total Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              
-              <td class="player-col">Alexis Marie</td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td class="total-score-col">0</td>
-            </tr>
-            <tr>
-              
-              <td class="player-col">John Smith </td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td class="total-score-col">0</td>
-            </tr>
-            <tr>
-                
-              <td class="player-col">Emmanuel Oyervides</td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td><input type="number" min="0" value="" pattern="[0-9]*" oninput="this.value = this.value.slice(0, 2)" id="number-input"></td>
-              <td class="total-score-col">0</td>
-            </tr>
-            <tr>
-                
-                <td class="player-col" onclick="addPlayer()">+</td>
-              </tr>
-          </tbody>
+            </tbody>
         </table>
       </div>
     </div>
@@ -377,6 +313,130 @@ input[type="text"] {
         </label>
     </div>
         <script>
+            function createTableHead() {
+                // Create the <thead> element
+                const thead = document.createElement('thead');
+
+                // Create the <tr> element
+                const tr = document.createElement('tr');
+
+                // Create and append the <th> elements
+                const playerColTh = document.createElement('th');
+                playerColTh.className = 'player-col';
+                playerColTh.innerHTML = `
+                    <button class="switch-button">Holes<br>10-18<span class="arrow arrow-right"></span></button>
+                `;
+                tr.appendChild(playerColTh);
+
+                // Create holes using a loop
+                for (let i = 1; i <= 9; i++) {
+                    const holeTh = document.createElement('th');
+                    holeTh.textContent = `Hole ${i}`;
+                    tr.appendChild(holeTh);
+                }
+
+                const totalScoreTh = document.createElement('th');
+                totalScoreTh.className = 'total-score-col';
+                totalScoreTh.textContent = 'Total Score';
+                tr.appendChild(totalScoreTh);
+
+                // Append the <tr> to the <thead>
+                thead.appendChild(tr);
+
+                // Get the table container
+                const tableContainer = document.querySelector('.table-container');
+
+                // Get the table within the container
+                const table = tableContainer.querySelector('table');
+
+                // Insert the <thead> before the first child of the table
+                table.insertBefore(thead, table.firstChild);
+            }
+            function insertPlayer(playerName, scoresArray) {
+                // Create the <tr> element
+                const tr = document.createElement('tr');
+
+                // Create and append the player name cell
+                const playerNameCell = document.createElement('td');
+                playerNameCell.className = 'player-col';
+                playerNameCell.textContent = playerName;
+                tr.appendChild(playerNameCell);
+
+                // Create and append the score cells
+                for (let i = 0; i < 9; i++) {
+                    const scoreCell = document.createElement('td');
+                    const scoreInput = document.createElement('input');
+                    scoreInput.type = 'number';
+                    scoreInput.min = '0';
+                    scoreInput.value = scoresArray && scoresArray[i] ? scoresArray[i] : '';
+                    scoreInput.pattern = '[0-9]*';
+                    scoreInput.id = 'number-input';
+                    scoreInput.oninput = function () {
+                    this.value = this.value.slice(0, 2);
+                    };
+                    scoreCell.appendChild(scoreInput);
+                    tr.appendChild(scoreCell);
+                }
+
+                // Create and append the total score cell
+                const totalScoreCell = document.createElement('td');
+                totalScoreCell.className = 'total-score-col';
+                totalScoreCell.textContent = '0';
+                tr.appendChild(totalScoreCell);
+
+                // Get the table container
+                const tableContainer = document.querySelector('.table-container');
+
+                // Get the tbody within the container
+                const tbody = tableContainer.querySelector('tbody');
+
+                // Append the row to the tbody
+                tbody.appendChild(tr);
+            }
+
+            function createTableFooter() {
+                // Create the <tr> element for the footer row
+                const tfoot = document.createElement('tfoot');
+                
+                const footerRow = document.createElement('tr');
+
+                // Create the footer cell
+                const footerCell = document.createElement('td');
+                footerCell.className = 'player-col';
+                footerCell.textContent = '+';
+                footerCell.onclick = function() {
+                    insertPlayer('player');
+                    addPlayerColListeners();
+                };
+
+                // Append the footer cell to the footer row
+                footerRow.appendChild(footerCell);
+                tfoot.appendChild(footerRow);
+
+
+                // Get the table container
+                const tableContainer = document.querySelector('.table-container');
+
+                const table = tableContainer.querySelector('table');
+
+                table.appendChild(tfoot)
+                // Append the footer row to the tbody
+            }
+
+
+
+
+            createTableHead();
+
+            insertPlayer('Alexis Marie');
+
+            insertPlayer('John Doe', [4, 4, 4]);
+
+            createTableFooter();
+
+
+
+
             window.addEventListener('DOMContentLoaded', () => {
               const scoreStickyToggle = document.getElementById('score-sticky-toggle');
               const scoreCells = document.querySelectorAll('.total-score-col');
@@ -409,10 +469,10 @@ input[type="text"] {
   
               const totalScore = scores.reduce((total, score) => total + score, 0);
               const totalScoreCell = row.querySelector('.total-score-col');
-              totalScoreCell.textContent = totalScore;
+              try{totalScoreCell.textContent = totalScore}catch(error){}
             });
           }
-          
+          calculateTotalScore();
             });
 
             document.addEventListener('click', function(event) {
@@ -421,10 +481,6 @@ input[type="text"] {
                 numberInput.blur();
               }
             });
-
-            function addPlayer() {
-
-            }
 
 
 
@@ -494,17 +550,23 @@ function stopResize() {
 }
 
 parentColsNames = [];
-const playerCols = document.querySelectorAll('.player-col');
+playerCols = document.querySelectorAll('.player-col');
 let selectedPlayerCol = null;
 let ignoreClick = [];
 
-playerCols.forEach((playerCol, index) => {
-    parentColsNames.push(playerCol.textContent.trim());
-    if (index !== 0 && index !== playerCols.length - 1) {
-        playerCol.addEventListener('click', handleClick);
-        playerCol.addEventListener('touchstart', handleTouch);
-  }
-})
+function addPlayerColListeners(){
+    playerCols = document.querySelectorAll('.player-col');
+    
+    playerCols.forEach((playerCol, index) => {
+        parentColsNames.push(playerCol.textContent.trim());
+        if (index !== 0 && index !== playerCols.length - 1) {
+            playerCol.addEventListener('click', handleClick);
+            playerCol.addEventListener('touchstart', handleTouch);
+    }
+    })
+}
+
+addPlayerColListeners();
 
 
 
