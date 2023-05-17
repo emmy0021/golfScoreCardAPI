@@ -300,7 +300,6 @@ input[type="text"] {
       <div class="table-container">
         <table>
             <tbody>
-                
             </tbody>
         </table>
       </div>
@@ -407,6 +406,7 @@ input[type="text"] {
                 footerCell.onclick = function() {
                     insertPlayer('player');
                     addPlayerColListeners();
+                    initResizeEventListers();
                 };
 
                 // Append the footer cell to the footer row
@@ -435,13 +435,14 @@ input[type="text"] {
             createTableFooter();
 
 
-
+            scoreStickyToggle = document.getElementById('score-sticky-toggle');
 
             window.addEventListener('DOMContentLoaded', () => {
-              const scoreStickyToggle = document.getElementById('score-sticky-toggle');
-              const scoreCells = document.querySelectorAll('.total-score-col');
+              scoreStickyToggle = document.getElementById('score-sticky-toggle');
           
               scoreStickyToggle.addEventListener('change', () => {
+                scoreCells = document.querySelectorAll('.total-score-col');
+
                 if (scoreStickyToggle.checked) {
                   scoreCells.forEach((cell) => {
                     cell.classList.add('sticky');
@@ -492,24 +493,31 @@ let parentCols = [];
 let editNamesEnabled = true;
 
 // Elements
-const resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
+resizeTabs = null;
 const swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
 
-// Event listeners
-resizeTabs.forEach(resizeTab => {
-  resizeTab.addEventListener('mousedown', initResize, false);
-  resizeTab.addEventListener('touchstart', initResize, false);
-});
 
-document.addEventListener('mousemove', resizeTable, false);
-document.addEventListener('touchmove', resizeTable, false);
-document.addEventListener('mouseup', stopResize, false);
-document.addEventListener('touchend', stopResize, false);
+function initResizeEventListers(){
+    resizeTabs = Array.from(document.querySelectorAll('.player-col, .switch-button'));
+
+    resizeTabs.forEach(resizeTab => {
+    resizeTab.addEventListener('mousedown', initResize, false);
+    resizeTab.addEventListener('touchstart', initResize, false);
+    });
+
+
+    document.addEventListener('mousemove', resizeTable, false);
+    document.addEventListener('touchmove', resizeTable, false);
+    document.addEventListener('mouseup', stopResize, false);
+    document.addEventListener('touchend', stopResize, false);
+}
+
+initResizeEventListers();
 
 // Helper functions
 function initResize(e) {
   e.preventDefault();
-  const resizeTab = e.target.closest('.player-col');
+  resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
     startX = e.clientX || e.touches[0].clientX;
@@ -556,7 +564,7 @@ let ignoreClick = [];
 
 function addPlayerColListeners(){
     playerCols = document.querySelectorAll('.player-col');
-    
+    parentColsNames = [];
     playerCols.forEach((playerCol, index) => {
         parentColsNames.push(playerCol.textContent.trim());
         if (index !== 0 && index !== playerCols.length - 1) {
@@ -629,7 +637,6 @@ function activateEditMode(playerCol) {
 
 
 function minimizeNames() {
-
   playerCols.forEach((playerCol, index) => {
     if (index !== 0 && index !== playerCols.length - 1) {
       const name = playerCol.textContent.trim();
@@ -656,7 +663,7 @@ function minimizeNames() {
 
 
 function maximizeNames() {
-  playerCols.forEach((playerCol, index) => {
+    playerCols.forEach((playerCol, index) => {
     if (index !== 0 && index !== playerCols.length - 1) {
       const initials = parentColsNames[index];
       if (initials.includes('.') && initials.length > 1) {
