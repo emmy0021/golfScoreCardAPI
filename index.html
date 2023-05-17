@@ -313,6 +313,10 @@ input[type="text"] {
     </div>
         <script>
             let isFinishedLoadingTable = false;
+            let holesMSGDefault = 'Holes<br>10-18<span class="arrow arrow-right">';
+            let holesMSGFinal = holesMSGDefault;
+            let holesMSGMedium = '<br><span class="arrow arrow-right">';
+            let holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
 
             function createTableHead(isFirst9Holes = true) {
                 const theadExists = document.querySelector('thead');
@@ -333,7 +337,7 @@ input[type="text"] {
                 const playerColTh = document.createElement('th');
                 playerColTh.className = 'player-col';
                 playerColTh.innerHTML = `
-                <button class="switch-button" onclick="createTableHead(${isFirst9Holes ? 'false' : 'true'})">Holes<br>10-18<span class="arrow arrow-right"></span></button>
+                <button class="switch-button" onclick="createTableHead(${isFirst9Holes ? 'false' : 'true'})" ontouchstart="createTableHead(${isFirst9Holes ? 'false' : 'true'})">${holesMSGFinal}</span></button>
                 `;
                 tr.appendChild(playerColTh);
 
@@ -367,6 +371,13 @@ input[type="text"] {
 
                 // Insert the <thead> before the first child of the table
                 table.insertBefore(thead, table.firstChild);
+
+                const switchButtonTimeout = document.getElementsByClassName('switch-button')[0];
+                switchButtonTimeout.disabled = true;
+                setTimeout(() => {
+                    switchButtonTimeout.disabled = false;
+                }, 500);
+
                 if(isFinishedLoadingTable){
                     initToggleSwitchHolesButtonEventListeners();
                 }
@@ -539,9 +550,7 @@ let editNamesEnabled = true;
 resizeTabs = null;
  swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
 
-let holesMSGDefault = 'Holes<br>10-18<span class="arrow arrow-right">';
-let holesMSGMedium = '<br><span class="arrow arrow-right">';
-let holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
+
 let holesMSGCaseNo = 0;
 let switchHolesToggle = true;
 
@@ -558,7 +567,6 @@ function toggleSwitchHolesButton(){
         holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
     }
 
-    holesMSGFinal = holesMSGDefault;
     switch(holesMSGCaseNo){
             case 3:
                 holesMSGFinal = holesMSGShort;
