@@ -437,11 +437,9 @@ input[type="text"] {
                 footerCell.textContent = '+';
                 footerCell.onclick = function() {
                     insertPlayer('player');
-                    addPlayerColListeners();
-                    initResizeEventListers();
-                    initScoreInputsEventListeners();
-                    initStickyScore();
+                    initAllColListeners();
                 };
+
 
                 // Append the footer cell to the footer row
                 footerRow.appendChild(footerCell);
@@ -472,6 +470,12 @@ input[type="text"] {
 
             scoreStickyToggle = document.getElementById('score-sticky-toggle');
 
+            function initAllColListeners(){
+                initPlayerColListeners();
+                initResizeEventListers();
+                initScoreInputsEventListeners();
+                initStickyScore();
+            }
             
             function calculateTotalScore() {
             const rows = document.querySelectorAll('tbody tr');
@@ -664,7 +668,7 @@ playerCols = document.querySelectorAll('.player-col');
 let selectedPlayerCol = null;
 let ignoreClick = [];
 
-function addPlayerColListeners(){
+function initPlayerColListeners(){
     playerCols = document.querySelectorAll('.player-col');
     parentColsNames = [];
     playerCols.forEach((playerCol, index) => {
@@ -676,7 +680,7 @@ function addPlayerColListeners(){
     })
 }
 
-addPlayerColListeners();
+initPlayerColListeners();
 
 
 
@@ -727,9 +731,19 @@ function activateEditMode(playerCol) {
     ignoreClick[index] = false;
     const updatedValue = input.value.trim();
 
-    playerCol.innerHTML = updatedValue !== '' ? updatedValue : '-';
-
+    if (updatedValue !== '') {
+    playerCol.innerHTML = updatedValue;
     parentColsNames[index] = updatedValue;
+  } else {
+
+    const parentElement = playerCol.parentNode;
+    if (parentElement) {
+      parentElement.remove(); // Remove the parent element of playerCol
+      parentColsNames.splice(index, 1); // Remove the corresponding entry from parentColsNames array
+      ignoreClick.splice(index, 1);
+      initAllColListeners();
+    }
+  }
 
     playerCol.classList.remove('selected');
     selectedPlayerCol = null;
