@@ -454,7 +454,7 @@ input[type="text"] {
 
             insertPlayer('Alexis Marie');
 
-            insertPlayer('Emmanuel', [4, 4, 4]);
+            insertPlayer('Emmanuel', [3, 3, 3]);
 
             createTableFooter();
 
@@ -612,8 +612,14 @@ function initResize(e) {
 
 function resizeTable(e) {
   if (!isResizing) return;
-  const deltaX = (e.clientX || e.touches[0].clientX) - startX;
-
+  deltaX=0;
+  if (e.touches && e.touches.length > 0) {
+    deltaX = (e.touches[0].clientX || 0) - startX;
+    // Rest of your code
+  } else {
+    deltaX = (e.clientX || 0) - startX;
+    // Rest of your code
+  }
 
   for (let i = 0; i < parentCols.length; i++) {
     const newWidth = startWidth[i] + deltaX;
