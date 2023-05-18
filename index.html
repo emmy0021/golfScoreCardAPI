@@ -662,7 +662,7 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
   const toggleButton = document.querySelector('.toggle-button');
-  initAllColListeners(false);
+  initAllColListeners(true);
   switch(holesMSGCaseNo){
             case 3:
                 setTableFooterVisibility(false);
