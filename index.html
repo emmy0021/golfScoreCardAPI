@@ -662,7 +662,7 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
   const toggleButton = document.querySelector('.toggle-button');
-  initAllColListeners(true);
+  initAllColListeners(false);
   switch(holesMSGCaseNo){
             case 3:
                 setTableFooterVisibility(false);
@@ -753,6 +753,8 @@ function activateEditMode(playerCol) {
   input.addEventListener('blur', () => {
     ignoreClick[index] = false;
     const updatedValue = input.value.trim();
+    playerCol.classList.remove('selected');
+
 
     if (updatedValue !== '') {
     playerCol.innerHTML = updatedValue;
@@ -769,7 +771,6 @@ function activateEditMode(playerCol) {
     }
   }
 
-    playerCol.classList.remove('selected');
     selectedPlayerCol = null;
 
   });
