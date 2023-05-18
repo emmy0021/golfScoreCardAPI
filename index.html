@@ -662,7 +662,6 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
   const toggleButton = document.querySelector('.toggle-button');
-  initAllColListeners(false);
   switch(holesMSGCaseNo){
             case 3:
                 setTableFooterVisibility(false);
@@ -727,7 +726,6 @@ function handlePlayerColEvent(playerCol) {
       selectedPlayerCol = playerCol;
       playerCol.classList.add('selected');
     }
-    initPlayerColListeners(false);
   }
 }
 
