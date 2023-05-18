@@ -5,6 +5,7 @@
 - [ ] When player added start in edit mode
 - [ ] when you click 10-18 holes button then the scores should be updated
 - [ ] Website can receive url arguments or input to initialize player names and scores
+  - Can be used to save a session scores without logging in
 - [ ] google sign in to save previous scores
 - [ ] export scores to email or text
 ### bug fix
