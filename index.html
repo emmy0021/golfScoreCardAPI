@@ -470,8 +470,8 @@ input[type="text"] {
 
             scoreStickyToggle = document.getElementById('score-sticky-toggle');
 
-            function initAllColListeners(){
-                initPlayerColListeners();
+            function initAllColListeners(reset = true){
+                initPlayerColListeners(reset);
                 initResizeEventListers();
                 initScoreInputsEventListeners();
                 initStickyScore();
@@ -662,7 +662,7 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
   const toggleButton = document.querySelector('.toggle-button');
-  initAllColListeners();
+  initAllColListeners(false);
   switch(holesMSGCaseNo){
             case 3:
                 setTableFooterVisibility(false);
@@ -688,9 +688,12 @@ playerCols = document.querySelectorAll('.player-col');
 let selectedPlayerCol = null;
 let ignoreClick = [];
 
-function initPlayerColListeners(){
-    playerCols = document.querySelectorAll('.player-col');
-    parentColsNames = [];
+function initPlayerColListeners(reset = true){
+
+    if(reset){
+        playerCols = document.querySelectorAll('.player-col');
+        parentColsNames = [];
+    }
     playerCols.forEach((playerCol, index) => {
         parentColsNames.push(playerCol.textContent.trim());
         if (index !== 0 && index !== playerCols.length - 1) {
