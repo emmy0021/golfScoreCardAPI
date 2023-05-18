@@ -758,7 +758,6 @@ function activateEditMode(playerCol) {
     if (updatedValue !== '') {
     playerCol.innerHTML = updatedValue;
     parentColsNames[index] = updatedValue;
-    initAllColListeners(false);
   } else {
 
     const parentElement = playerCol.parentNode;
@@ -766,7 +765,6 @@ function activateEditMode(playerCol) {
       parentElement.remove(); // Remove the parent element of playerCol
       parentColsNames.splice(index, 1); // Remove the corresponding entry from parentColsNames array
       ignoreClick.splice(index, 1);
-      initAllColListeners();
     }
   }
 
