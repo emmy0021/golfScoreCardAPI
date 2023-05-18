@@ -613,6 +613,8 @@ initResizeEventListers();
 // Helper functions
 function initResize(e) {
   e.preventDefault();
+  const input = document.querySelector('input');
+  triggerBlurEvent(input);
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
@@ -772,6 +774,12 @@ function activateEditMode(playerCol) {
     selectedPlayerCol = null;
 
   });
+}
+
+
+function triggerBlurEvent(element) {
+  const event = new Event('blur');
+  element.dispatchEvent(event);
 }
 
 
