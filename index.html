@@ -613,6 +613,12 @@ initResizeEventListers();
 // Helper functions
 function initResize(e) {
   e.preventDefault();
+  const input = document.querySelector('input');
+  if(input){
+    triggerBlurEvent(input);
+  }else{
+    initPlayerColListeners();
+  }
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
@@ -662,7 +668,6 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
   const toggleButton = document.querySelector('.toggle-button');
-  initAllColListeners(false);
   switch(holesMSGCaseNo){
             case 3:
                 setTableFooterVisibility(false);
@@ -689,7 +694,7 @@ let selectedPlayerCol = null;
 let ignoreClick = [];
 
 function initPlayerColListeners(reset = true){
-
+    console.log("initPlayerColListeners reset? " + reset);
     if(reset){
         playerCols = document.querySelectorAll('.player-col');
         parentColsNames = [];
@@ -727,7 +732,6 @@ function handlePlayerColEvent(playerCol) {
       selectedPlayerCol = playerCol;
       playerCol.classList.add('selected');
     }
-    initPlayerColListeners();
   }
 }
 
@@ -752,6 +756,7 @@ function activateEditMode(playerCol) {
 
 
   input.addEventListener('blur', () => {
+    console.log("this blur triggered");
     ignoreClick[index] = false;
     const updatedValue = input.value.trim();
     playerCol.classList.remove('selected');
@@ -760,7 +765,6 @@ function activateEditMode(playerCol) {
     if (updatedValue !== '') {
     playerCol.innerHTML = updatedValue;
     parentColsNames[index] = updatedValue;
-    initAllColListeners(false);
   } else {
 
     const parentElement = playerCol.parentNode;
@@ -768,13 +772,18 @@ function activateEditMode(playerCol) {
       parentElement.remove(); // Remove the parent element of playerCol
       parentColsNames.splice(index, 1); // Remove the corresponding entry from parentColsNames array
       ignoreClick.splice(index, 1);
-      initAllColListeners();
     }
   }
 
     selectedPlayerCol = null;
 
   });
+}
+
+
+function triggerBlurEvent(element) {
+  const event = new Event('blur');
+  element.dispatchEvent(event);
 }
 
 
