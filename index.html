@@ -379,7 +379,8 @@ input[type="text"] {
                 }, 500);
 
                 if(isFinishedLoadingTable){
-                  initAllColListeners();
+                  initStickyScore();
+                  initToggleSwitchHolesButtonEventListeners();
                 }
             }
 
@@ -478,6 +479,7 @@ input[type="text"] {
                 initResizeEventListers();
                 initScoreInputsEventListeners();
                 initStickyScore();
+                initToggleSwitchHolesButtonEventListeners();
             }
             
             function calculateTotalScore() {
