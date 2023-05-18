@@ -613,11 +613,6 @@ initResizeEventListers();
 // Helper functions
 function initResize(e) {
   e.preventDefault();
-  playerCols = document.querySelectorAll('.player-col');
-  playerCols.forEach(playerCol => {
-    playerCol.classList.remove('selected');
-    });
-
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
@@ -667,7 +662,7 @@ function resizeTable(e) {
 function stopResize() {
   isResizing = false;
   const toggleButton = document.querySelector('.toggle-button');
-
+  initAllColListeners();
   switch(holesMSGCaseNo){
             case 3:
                 setTableFooterVisibility(false);
