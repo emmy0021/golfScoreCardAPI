@@ -750,6 +750,7 @@ function activateEditMode(playerCol) {
 
 
   input.addEventListener('blur', () => {
+    console.log("this blur triggered");
     ignoreClick[index] = false;
     const updatedValue = input.value.trim();
     playerCol.classList.remove('selected');
@@ -768,7 +769,6 @@ function activateEditMode(playerCol) {
     }
   }
 
-  initPlayerColListeners(false);
     selectedPlayerCol = null;
 
   });
