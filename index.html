@@ -383,7 +383,7 @@ input[type="text"] {
                 }
             }
 
-            function insertPlayer(playerName, scoresArray) {
+            function insertPlayer(playerName, scoresArray, bringFocus = false) {
                 // Create the <tr> element
                 const tr = document.createElement('tr');
 
@@ -423,6 +423,9 @@ input[type="text"] {
 
                 // Append the row to the tbody
                 tbody.appendChild(tr);
+                if(bringFocus){
+                  activateEditMode( tr.querySelectorAll('.player-col')[0] );
+                }
             }
 
             function createTableFooter() {
@@ -436,7 +439,7 @@ input[type="text"] {
                 footerCell.className = 'player-col';
                 footerCell.textContent = '+';
                 footerCell.onclick = function() {
-                    insertPlayer('player');
+                    insertPlayer('player', [], true);
                     initAllColListeners();
                 };
 
@@ -461,7 +464,7 @@ input[type="text"] {
 
             createTableHead();
 
-            insertPlayer('Alexis Marie');
+            insertPlayer('Alexis Marie', []);
 
             insertPlayer('Emmanuel', [3, 3, 3]);
 
@@ -736,6 +739,7 @@ function handlePlayerColEvent(playerCol) {
 }
 
 function activateEditMode(playerCol) {
+  console.log(playerCol);
   const index = Array.from(playerCols).indexOf(playerCol);
 
   if (ignoreClick[index]) {
