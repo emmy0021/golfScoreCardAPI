@@ -757,6 +757,7 @@ function activateEditMode(playerCol) {
     if (updatedValue !== '') {
     playerCol.innerHTML = updatedValue;
     parentColsNames[index] = updatedValue;
+    initAllColListeners(false);
   } else {
 
     const parentElement = playerCol.parentNode;
