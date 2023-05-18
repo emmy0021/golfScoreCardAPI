@@ -613,6 +613,11 @@ initResizeEventListers();
 // Helper functions
 function initResize(e) {
   e.preventDefault();
+  playerCols = document.querySelectorAll('.player-col');
+  playerCols.forEach(playerCol => {
+    playerCol.classList.remove('selected');
+    });
+
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
