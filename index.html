@@ -694,7 +694,7 @@ let selectedPlayerCol = null;
 let ignoreClick = [];
 
 function initPlayerColListeners(reset = true){
-
+    console.log("initPlayerColListeners reset? " + reset);
     if(reset){
         playerCols = document.querySelectorAll('.player-col');
         parentColsNames = [];
