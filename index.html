@@ -617,7 +617,7 @@ function initResize(e) {
   if(input){
     triggerBlurEvent(input);
   }else{
-    initPlayerColListeners(false);
+    initPlayerColListeners();
   }
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
