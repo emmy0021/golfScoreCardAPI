@@ -614,10 +614,7 @@ initResizeEventListers();
 function initResize(e) {
   e.preventDefault();
   const input = document.querySelector('input');
-  if(input){
     triggerBlurEvent(input);
-    initAllColListeners(false);
-  }
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
