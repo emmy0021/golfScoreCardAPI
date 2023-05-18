@@ -671,6 +671,7 @@ function stopResize() {
                 setTableFooterVisibility(true);
                 toggleButton.style.top = '-66px';   
     }
+    setTimeout(initAllColListeners, 250);
 }
 
 function setTableFooterVisibility(visible) {
