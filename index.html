@@ -317,7 +317,8 @@ input[type="text"] {
             let holesMSGFinal = holesMSGDefault;
             let holesMSGMedium = '<br><span class="arrow arrow-right">';
             let holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
-
+            let i_start = 1;
+            let i_end = i_start+8;
             function createTableHead(isFirst9Holes = true) {
                 const theadExists = document.querySelector('thead');
 
@@ -381,11 +382,46 @@ input[type="text"] {
                 if(isFinishedLoadingTable){
                   initStickyScore();
                   initToggleSwitchHolesButtonEventListeners();
+                  refreshPlayerScores();
                 }
             }
 
+            let allPlayerScoresArray = [];
+            let playerCols = [];
+
+            function refreshPlayerScores(){
+              const tbodyExists = document.querySelector('tbody');
+
+              if (tbodyExists) {
+                while (tbodyExists.firstChild) {
+                  tbodyExists.removeChild(tbodyExists.firstChild);
+                }
+              }
+
+              playerCols.forEach((playerCol, indx) => {
+                if(indx !== 0 && indx !== playerCols.length - 1){
+                  insertPlayer(playerCol.textContent.trim(),allPlayerScoresArray[indx-1]);
+                }
+              });
+
+              initAllColListeners();
+              calculateTotalScore();
+
+            }
+
             function insertPlayer(playerName, scoresArray, bringFocus = false) {
-                // Create the <tr> element
+              playerIndex = allPlayerScoresArray.length;
+              const playerColsArray = Array.from(playerCols);
+              if(playerCols && playerColsArray.includes(playerName)){
+                playerIndex = playerCols.indexOf(playerName);
+              }else{
+                if (scoresArray.length > 0) {
+                  allPlayerScoresArray.push([...scoresArray]);
+                } else {
+                  allPlayerScoresArray.push([]);
+                }
+              } 
+              // Create the <tr> element
                 const tr = document.createElement('tr');
 
                 // Create and append the player name cell
@@ -394,13 +430,16 @@ input[type="text"] {
                 playerNameCell.textContent = playerName;
                 tr.appendChild(playerNameCell);
 
+
+                
                 // Create and append the score cells
-                for (let i = 0; i < 9; i++) {
+                for (let i = i_start -1; i < i_end; i++) {
                     const scoreCell = document.createElement('td');
                     const scoreInput = document.createElement('input');
                     scoreInput.type = 'number';
                     scoreInput.min = '0';
-                    scoreInput.value = scoresArray && scoresArray[i] ? scoresArray[i] : '';
+                    const playerScoresArray = allPlayerScoresArray[playerIndex];
+                    scoreInput.value = playerScoresArray && playerScoresArray[i] ? playerScoresArray[i] : '';
                     scoreInput.pattern = '[0-9]*';
                     scoreInput.id = 'number-input';
                     scoreInput.oninput = function () {
@@ -465,9 +504,9 @@ input[type="text"] {
 
             createTableHead();
 
-            insertPlayer('Alexis Marie', []);
+            insertPlayer('Alexis Marie', [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]);
 
-            insertPlayer('Emmanuel', [3, 3, 3]);
+            insertPlayer('Emmanuel', [1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2]);
 
             createTableFooter();
 
