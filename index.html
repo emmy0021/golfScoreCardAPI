@@ -350,8 +350,6 @@ input[type="text"] {
 
             parentColsNames = getCookie('parentColsNames');
             allPlayerScoresArray = getCookie('allPlayerScoresArray');
-            console.log(parentColsNames);
-            console.log(allPlayerScoresArray);
 
 
             function createTableHead(isFirst9Holes = true) {
@@ -416,6 +414,7 @@ input[type="text"] {
 
                 if(isFinishedLoadingTable){
                   initStickyScore();
+                  initPlayerColListeners();
                   initToggleSwitchHolesButtonEventListeners();
                 }
             }
@@ -573,7 +572,10 @@ input[type="text"] {
             const rows = document.querySelectorAll('tbody tr');
             rows.forEach((row, indx) => {
               const scores = Array.from(row.querySelectorAll('input'))
-                .map((input) => parseInt(input.value));    
+                .map((input) => {
+                  const score = parseInt(input.value);
+                  return isNaN(score) ? 0 : score;
+                });    
 
                 if ((switchHolesToggle)) {
                   allPlayerScoresArray[indx].splice(0, 9, ...scores);
