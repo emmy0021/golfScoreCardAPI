@@ -413,9 +413,9 @@ input[type="text"] {
                 }, 500);
 
                 if(isFinishedLoadingTable){
+                  initToggleSwitchHolesButtonEventListeners();
                   initStickyScore();
                   initPlayerColListeners();
-                  initToggleSwitchHolesButtonEventListeners();
                 }
             }
 
@@ -560,11 +560,11 @@ input[type="text"] {
             scoreStickyToggle = document.getElementById('score-sticky-toggle');
 
             function initAllColListeners(reset = true){
+                initToggleSwitchHolesButtonEventListeners();
                 initPlayerColListeners(reset);
                 initResizeEventListers();
                 initScoreInputsEventListeners();
                 initStickyScore();
-                initToggleSwitchHolesButtonEventListeners();
             }
             
             function calculateTotalScore(isFirst9Holes = true) {
@@ -886,6 +886,7 @@ function activateEditMode(playerCol) {
 function triggerBlurEvent(element) {
   const event = new Event('blur');
   element.dispatchEvent(event);
+  initAllColListeners();
 }
 
 
