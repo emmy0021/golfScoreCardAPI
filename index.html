@@ -319,6 +319,7 @@ input[type="text"] {
             let holesMSGShort = '<br><span class="arrow arrow-right hide-after">';
             let i_start = 1;
             let i_end = i_start+8;
+
             function createTableHead(isFirst9Holes = true) {
                 const theadExists = document.querySelector('thead');
 
@@ -382,14 +383,13 @@ input[type="text"] {
                 if(isFinishedLoadingTable){
                   initStickyScore();
                   initToggleSwitchHolesButtonEventListeners();
-                  refreshPlayerScores();
                 }
             }
 
             let allPlayerScoresArray = [];
             let playerCols = [];
 
-            function refreshPlayerScores(){
+            function refreshPlayerScores(isFirst9Holes = true){
               const tbodyExists = document.querySelector('tbody');
 
               if (tbodyExists) {
@@ -398,22 +398,29 @@ input[type="text"] {
                 }
               }
 
+
               playerCols.forEach((playerCol, indx) => {
                 if(indx !== 0 && indx !== playerCols.length - 1){
-                  insertPlayer(playerCol.textContent.trim(),allPlayerScoresArray[indx-1]);
+                 insertPlayer(playerCol.textContent.trim(),allPlayerScoresArray[indx-1]);
                 }
               });
 
+
               initAllColListeners();
-              calculateTotalScore();
+              calculateTotalScore(isFirst9Holes);
 
             }
 
             function insertPlayer(playerName, scoresArray, bringFocus = false) {
               playerIndex = allPlayerScoresArray.length;
-              const playerColsArray = Array.from(playerCols);
-              if(playerCols && playerColsArray.includes(playerName)){
-                playerIndex = playerCols.indexOf(playerName);
+              let playerColNamesArray = []
+
+              playerCols.forEach(playerCol => {
+                playerColNamesArray.push(playerCol.textContent.trim());
+              });
+
+              if(playerColNamesArray && playerColNamesArray.includes(playerName)){
+                playerIndex = playerColNamesArray.indexOf(playerName) -1;
               }else{
                 if (scoresArray.length > 0) {
                   allPlayerScoresArray.push([...scoresArray]);
@@ -479,7 +486,7 @@ input[type="text"] {
                 footerCell.className = 'player-col';
                 footerCell.textContent = '+';
                 footerCell.onclick = function() {
-                    insertPlayer('player', [], true);
+                    insertPlayer('', [], true);
                     initAllColListeners();
                 };
 
@@ -509,7 +516,7 @@ input[type="text"] {
             insertPlayer('Emmanuel', [1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2]);
 
             createTableFooter();
-
+            let switchHolesToggle = true;
 
             scoreStickyToggle = document.getElementById('score-sticky-toggle');
 
@@ -521,13 +528,17 @@ input[type="text"] {
                 initToggleSwitchHolesButtonEventListeners();
             }
             
-            function calculateTotalScore() {
+            function calculateTotalScore(isFirst9Holes = true) {
             const rows = document.querySelectorAll('tbody tr');
-  
-            rows.forEach((row) => {
+            rows.forEach((row, indx) => {
               const scores = Array.from(row.querySelectorAll('input'))
-                .map((input) => parseInt(input.value))
-                .filter((score) => !isNaN(score));
+                .map((input) => parseInt(input.value));    
+
+                if ((switchHolesToggle)) {
+                  allPlayerScoresArray[indx].splice(0, 9, ...scores);
+                } else {
+                  allPlayerScoresArray[indx].splice(9, 9, ...scores);
+                }
   
               const totalScore = scores.reduce((total, score) => total + score, 0);
               const totalScoreCell = row.querySelector('.total-score-col');
@@ -600,9 +611,13 @@ resizeTabs = null;
 
 
 let holesMSGCaseNo = 0;
-let switchHolesToggle = true;
 
 function toggleSwitchHolesButton(){
+
+    const input = document.querySelector('.player-text-input');
+    if(input){
+      triggerBlurEvent(input);
+    }
     swtchHolesButton = document.getElementsByClassName('switch-button').item(0);
     if(switchHolesToggle){
         holesMSGDefault = 'Holes<br>1-9<span class="arrow arrow-left">';
@@ -628,6 +643,8 @@ function toggleSwitchHolesButton(){
     swtchHolesButton.innerHTML = holesMSGFinal;
 
     switchHolesToggle = !switchHolesToggle;
+    refreshPlayerScores();
+
 }
 
 function initToggleSwitchHolesButtonEventListeners(){
@@ -657,12 +674,10 @@ initResizeEventListers();
 // Helper functions
 function initResize(e) {
   e.preventDefault();
-  const input = document.querySelector('input');
-  if(input){
-    triggerBlurEvent(input);
-  }else{
-    initPlayerColListeners();
-  }
+  const input = document.querySelector('.player-text-input');
+    if(input){
+      triggerBlurEvent(input);
+    }
   resizeTab = e.target.closest('.player-col');
   if (resizeTab) {
     isResizing = true;
@@ -793,6 +808,7 @@ function activateEditMode(playerCol) {
   const input = document.createElement('input');
   input.type = 'text';
   input.value = content;
+  input.className = "player-text-input"
 
   playerCol.innerHTML = '';
   playerCol.appendChild(input);

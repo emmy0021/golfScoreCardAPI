@@ -13,4 +13,4 @@
 - [ ] When player name in edit mode and you use slider you cannot use edit mode on that player again
 - [x] When you click 10-18 holes button and sticky scores is enabled the first row's sticky score disappears
 - [ ] minor: When you click 10-18 holes button the size of first column changes
-- [ ] When you change a score you should also update scores array so that when you switch holes the scores stay present
+- [x] When you change a score you should also update scores array so that when you switch holes the scores stay present
