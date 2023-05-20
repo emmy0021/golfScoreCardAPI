@@ -10,6 +10,7 @@
 - [ ] export scores to email or text
 - [ ] Help button to help navigate page
 ### bug fix
+- [ ] IMPORTANT: fix cookies
 - [ ] When player name in edit mode and you use slider you cannot use edit mode on that player again
 - [x] When you click 10-18 holes button and sticky scores is enabled the first row's sticky score disappears
 - [ ] minor: When you click 10-18 holes button the size of first column changes
