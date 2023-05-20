@@ -320,6 +320,40 @@ input[type="text"] {
             let i_start = 1;
             let i_end = i_start+8;
 
+            
+            function getCookie(name) {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                  const cookieValue = cookie.substring(name.length + 1);
+                  return JSON.parse(cookieValue);
+                }
+              }
+              return [];
+            }
+
+            function setCookie(name, value, days) {
+              const expires = new Date();
+              expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+              document.cookie = name + '=' + JSON.stringify(value) + ';expires=' + expires.toUTCString() + ';path=/';
+            }
+            function deleteCookie(name) {
+              document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            }
+
+            //deleteCookie('parentColsNames');
+            //deleteCookie('allPlayerScoresArray');
+
+            let parentColsNames = [];
+            let allPlayerScoresArray = [];
+
+            parentColsNames = getCookie('parentColsNames');
+            allPlayerScoresArray = getCookie('allPlayerScoresArray');
+            console.log(parentColsNames);
+            console.log(allPlayerScoresArray);
+
+
             function createTableHead(isFirst9Holes = true) {
                 const theadExists = document.querySelector('thead');
 
@@ -386,7 +420,6 @@ input[type="text"] {
                 }
             }
 
-            let allPlayerScoresArray = [];
             let playerCols = [];
 
             function refreshPlayerScores(isFirst9Holes = true){
@@ -410,17 +443,17 @@ input[type="text"] {
               calculateTotalScore(isFirst9Holes);
 
             }
+            let playerColNamesArray = []
 
             function insertPlayer(playerName, scoresArray, bringFocus = false) {
               playerIndex = allPlayerScoresArray.length;
-              let playerColNamesArray = []
 
               playerCols.forEach(playerCol => {
                 playerColNamesArray.push(playerCol.textContent.trim());
               });
 
-              if(playerColNamesArray && playerColNamesArray.includes(playerName)){
-                playerIndex = playerColNamesArray.indexOf(playerName) -1;
+              if(parentColsNames && parentColsNames.includes(playerName)){
+                playerIndex = parentColsNames.indexOf(playerName) -1;
               }else{
                 if (scoresArray.length > 0) {
                   allPlayerScoresArray.push([...scoresArray]);
@@ -511,9 +544,17 @@ input[type="text"] {
 
             createTableHead();
 
-            insertPlayer('Alexis Marie', [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]);
+            if(parentColsNames.length > 2){
+              parentColsNames.forEach((playerName, indx) => {
+                if(indx !== 0 && indx !== parentColsNames.length - 1){
+                  insertPlayer(playerName,allPlayerScoresArray[indx-1]);
+                }
+              });
+            }else{
+              insertPlayer('Alexis Marie', [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]);
+              insertPlayer('Emmanuel', [1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2]);
 
-            insertPlayer('Emmanuel', [1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2]);
+            }
 
             createTableFooter();
             let switchHolesToggle = true;
@@ -747,7 +788,6 @@ function setTableFooterVisibility(visible) {
 }
 
 
-parentColsNames = [];
 playerCols = document.querySelectorAll('.player-col');
 let selectedPlayerCol = null;
 let ignoreClick = [];
@@ -895,6 +935,10 @@ function maximizeNames() {
 }
 
 
+window.addEventListener('beforeunload',function(){
+  setCookie('parentColsNames',parentColsNames,1);
+  setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
+});
 
           </script>
         </body>
