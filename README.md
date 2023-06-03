@@ -10,6 +10,7 @@
 - [ ] export scores to email or text
 - [ ] Help button to help navigate page
 - [ ] undo button in case you hit wrong score
+- [ ]  calculate score from first player and show rankings
 ### bug fix
 - [ ] IMPORTANT: fix cookies
 - [ ] When player name in edit mode and you use slider you cannot use edit mode on that player again
