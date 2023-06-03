@@ -9,6 +9,7 @@
 - [ ] google sign in to save previous scores
 - [ ] export scores to email or text
 - [ ] Help button to help navigate page
+- [ ] undo button in case you hit wrong score
 ### bug fix
 - [ ] IMPORTANT: fix cookies
 - [ ] When player name in edit mode and you use slider you cannot use edit mode on that player again
