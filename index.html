@@ -315,6 +315,18 @@ input[type="text"] {
             <span></span>
         </label>
     </div>
+
+    <div>
+      <label for="receivedMessages">Received Messages:</label>
+      <textarea id="receivedMessages" readonly></textarea>
+    </div>
+  
+    <div>
+      <label for="messageInput">Message:</label>
+      <input type="text" id="messageInput">
+      <button id="sendButton">Send</button>
+    </div>
+
         <script>
             let isFinishedLoadingTable = false;
             let holesMSGDefault = 'Holes<br>10-18<span class="arrow arrow-right">';
@@ -551,7 +563,7 @@ input[type="text"] {
               parentColsNames.forEach((playerName, indx) => {
                 if(indx !== 0 && indx !== parentColsNames.length - 1){
                   insertPlayer(playerName,allPlayerScoresArray[indx-1]);
-                }
+                } 
               });
             }else{
               insertPlayer('M Emmy', []);
@@ -943,10 +955,51 @@ function maximizeNames() {
 }
 
 
-window.addEventListener('beforeunload',function(){
-  setCookie('parentColsNames',parentColsNames,1);
-  setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
-});
+
+
+    const socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
+    const receivedMessagesTextarea = document.getElementById('receivedMessages');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+
+    // Function to add a message to the received messages textarea
+    function addMessageToReceivedMessages(message) {
+      receivedMessagesTextarea.value += message + '\n';
+    }
+
+    // Event listener for receiving messages on the WebSocket
+    socket.onmessage = (event) => {
+      const message = event.data;
+      addMessageToReceivedMessages(message);
+    };
+
+    // Function to send a message on the WebSocket
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (message !== '') {
+        const formattedMessage = JSON.stringify({
+          action: 'sendmessage',
+          message: message
+        });
+        socket.send(formattedMessage);
+        addMessageToReceivedMessages('Sent: ' + formattedMessage);
+        messageInput.value = '';
+      }
+    }
+
+    // Attach event listeners to the button and input field
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      socket.close();
+      setCookie('parentColsNames',parentColsNames,1);
+      setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
+    });
 
           </script>
         </body>
