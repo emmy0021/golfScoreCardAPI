@@ -964,7 +964,15 @@ function maximizeNames() {
 
     // Function to add a message to the received messages textarea
     function addMessageToReceivedMessages(message) {
-      receivedMessagesTextarea.value += message + '\n';
+      if (message.startsWith('Sent: ')) {
+        message = message.substring('Sent: '.length);
+        const messageObj = JSON.parse(message);
+        const content = messageObj.message;
+        receivedMessagesTextarea.value += "You: " + content + '\n';
+
+      }else{
+        receivedMessagesTextarea.value += "Emmy: " + message + '\n';
+      }
     }
 
     // Event listener for receiving messages on the WebSocket
