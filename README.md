@@ -27,6 +27,7 @@ reach out to golf youtubers see if they would be interested in creating a gamemo
 - [ ] Find a way to implement a payment method so that users get charged like $3 per month to use it
 - [ ] Create different fun gamemodes like a beer drinking gamemode or others
 - [ ] Add a way to increment or decrement a score so you can use it as a clicker for couting scores
+- [ ] User can submit a picture to use in place of name
 ### bug fix
 - [ ] IMPORTANT: fix cookies
 - [ ] When player name in edit mode and you use slider you cannot use edit mode on that player again
