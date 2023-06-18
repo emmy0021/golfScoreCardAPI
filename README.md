@@ -17,3 +17,4 @@
 - [x] When you click 10-18 holes button and sticky scores is enabled the first row's sticky score disappears
 - [ ] minor: When you click 10-18 holes button the size of first column changes
 - [x] When you change a score you should also update scores array so that when you switch holes the scores stay present
+- [ ] make a button to contact golf club staff for drinks or what not
