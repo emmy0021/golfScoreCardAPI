@@ -1134,12 +1134,6 @@ function maximizeNames() {
 }
 
 
-window.addEventListener('beforeunload', () => {
-      socket.close();
-      setCookie('parentColsNames',parentColsNames,1);
-      setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
-    });
-
     //js for chat window
 
 
@@ -1158,15 +1152,46 @@ window.addEventListener('beforeunload', () => {
       return null;
     }
 
-   const socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
 
-   // Event listener for receiving messages on the WebSocket
-   socket.onmessage = (event) => {
+   var socket = null; // Declare the socket variable
+
+  function initWebSocket() {
+    // Create a new WebSocket instance
+    socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
+
+    // Add event listeners to handle WebSocket events
+    socket.addEventListener('open', function () {
+      console.log('WebSocket connection established');
+    });
+
+    socket.addEventListener('close', function () {
+      console.log('WebSocket connection closed');
+    });
+
+    socket.addEventListener('error', function (error) {
+      console.error('WebSocket error:', error);
+    });
+
+    socket.addEventListener('message', function (event) {
+      console.log('Received message:', event.data);
+      // Handle received message here
       const message = event.data;    
       
       const { username, groupId, messageReceived } = parseString(message);
       receiveMessage(username, messageReceived);
-    };
+    });
+  }
+
+  function handleVisibilityChange() {
+  if (document.visibilityState === 'visible' && socket && socket.readyState !== WebSocket.OPEN) {
+    // If the page becomes visible and WebSocket connection is not open, establish the connection
+    initWebSocket();
+  }
+}
+
+document.addEventListener('visibilitychange', handleVisibilityChange);
+
+initWebSocket();
 
 
     var currentUser = 'John'; // Change this to the current user's name
@@ -1207,7 +1232,21 @@ window.addEventListener('beforeunload', () => {
           action: 'sendmessage',
           message: message
         });
-        socket.send(formattedMessage);
+        
+        if (socket.readyState === WebSocket.OPEN) {
+          // If the WebSocket connection is open, send the message
+          socket.send(formattedMessage);
+        } else {
+          // If the WebSocket connection is closed, create a new WebSocket instance
+          socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
+
+          // Add an event listener to handle the WebSocket connection open event
+          socket.addEventListener('open', function () {
+            // Once the connection is open, send the message
+            socket.send(formattedMessage);
+          });
+        }
+
 
         chatBody.appendChild(messageElement);
         chatBody.scrollTop = chatBody.scrollHeight;
@@ -1275,6 +1314,14 @@ window.addEventListener('beforeunload', () => {
     setTimeout(function() {
       receiveMessage('Joe', "Sup!");
     }, 2000);
+
+    
+window.addEventListener('beforeunload', () => {
+      socket.close();
+      setCookie('parentColsNames',parentColsNames,1);
+      setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
+    });
+
 
           </script>
         </body>
