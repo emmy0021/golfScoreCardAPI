@@ -296,6 +296,180 @@ input[type="text"] {
   font-size: 18px;
 }
 
+/*css for chat window*/
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    .chat-container {
+      position: fixed;
+      right: 0px;
+      bottom: -21px;
+      width: 100%;
+      max-width: 480px;
+      height: 60px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      overflow: hidden;
+      transition: height 0.3s ease;
+      overflow: visible;
+      z-index: 99;
+    }
+
+    @media only screen and (max-width: 480px) {
+      .chat-container {
+        height: 60px;
+        bottom: -21px;
+      }
+    }
+
+    .chat-container.open {
+      height: 500px;
+    }
+
+    .chat-header {
+      background-color: #f1f1f1;
+      padding: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .chat-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .minimize-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .minimize-button:hover {
+      transform: scale(1.1);
+    }
+
+    .chat-body {
+      padding: 10px;
+      height: calc(100% - 106px);
+      overflow-y: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc transparent;
+    }
+
+    .chat-footer {
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      background-color: white;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-footer input[type="text"] {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      margin-right: 10px;
+    }
+
+    .chat-footer button {
+      padding: 6px 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: #fff;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      max-width: 90%;
+    }
+
+    .message.sent {
+      background-color: #4CAF50;
+      color: #fff;
+      align-self: flex-end;
+      position: relative;
+      left: 12%;
+    }
+
+    .message.received {
+      background-color: #f1f0f0;
+      color: #000;
+    }
+
+    .message .sender {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    #notification {
+      position: absolute;
+      top: -3px;
+      right: 4px;
+      width: 36px;
+      height: 36px;
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      font-size: 18px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    /* Custom Scrollbar Styling */
+    .chat-body::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chat-body::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 5px;
+    }
+
+    .chat-body::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    /* Jump Animation */
+    @keyframes jumpAnimation {
+      0% {
+        transform: translateY(0);
+      }
+      10% {
+        transform: translateY(-10px);
+      }
+      45% {
+        transform: translateY(0px);
+      }
+      65% {
+        transform: translateY(-5px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
 
     </style>
   </head>
@@ -325,6 +499,21 @@ input[type="text"] {
       <label for="messageInput">Message:</label>
       <input type="text" id="messageInput">
       <button id="sendButton">Send</button>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+      <div class="chat-header" onclick="toggleChat()">
+        <h2 class="chat-title">Chat Window</h2>
+        <button class="minimize-button" onclick="toggleChat()">-</button>
+        <div id="notification"></div>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <!-- Chat messages will be displayed here -->
+      </div>
+      <div class="chat-footer">
+        <input type="text" id="messageInput" placeholder="Type your message..." onkeydown="handleKeyDown(event)">
+        <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
 
         <script>
@@ -1008,6 +1197,110 @@ function maximizeNames() {
       setCookie('parentColsNames',parentColsNames,1);
       setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
     });
+
+
+    //js for chat window
+
+    var currentUser = 'John'; // Change this to the current user's name
+    var unreadMessages = 0; // Variable to keep track of unread messages
+
+    function toggleChat() {
+      var chatContainer = document.getElementById('chatContainer');
+      var chatBody = document.getElementById('chatBody');
+      var minimizeButton = document.querySelector('.minimize-button');
+
+      if (chatContainer.classList.contains('open')) {
+        chatContainer.style.height = '60px';
+        chatBody.style.display = 'none';
+        minimizeButton.textContent = '-';
+      } else {
+        chatContainer.style.height = '500px';
+        chatBody.style.display = 'block';
+        chatBody.scrollTop = chatBody.scrollHeight;
+        minimizeButton.textContent = '+';
+        unreadMessages = 0;
+        updateUnreadNotification();
+      }
+
+      chatContainer.classList.toggle('open');
+    }
+
+    function sendMessage(msg) {
+      var messageInput = document.getElementById('messageInput');
+      var message = messageInput.value.trim() !== '' ? messageInput.value.trim() : msg;
+      if (message !== '') {
+        var chatBody = document.getElementById('chatBody');
+
+        var messageElement = document.createElement('div');
+        messageElement.className = 'message sent';
+        messageElement.innerHTML = '<span class="sender">You:</span><span class="content">' + message + '</span>';
+
+        chatBody.appendChild(messageElement);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        messageInput.value = '';
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    // Sample function to receive a message from another user
+    function receiveMessage(sender, message) {
+      var chatContainer = document.getElementById('chatContainer');
+
+      // If chat window is closed or minimized, increment unread messages count
+      if (!chatContainer.classList.contains('open')) {
+        unreadMessages++;
+        updateUnreadNotification();
+      }
+
+      var chatBody = document.getElementById('chatBody');
+
+      var messageElement = document.createElement('div');
+      messageElement.className = 'message received';
+      messageElement.innerHTML = '<span class="sender">' + sender + ':</span><span class="content">' + message + '</span>';
+
+      chatBody.appendChild(messageElement);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function updateUnreadNotification() {
+      var notificationElement = document.getElementById('notification');
+      var minimizeButton = document.querySelector('.minimize-button');
+
+      if (unreadMessages > 0) {
+        notificationElement.style.display = 'flex';
+        notificationElement.textContent = unreadMessages;
+
+        // Apply jump animation using CSS animation properties
+        notificationElement.style.animation = 'jumpAnimation 0.45s ease-in-out';
+
+        // Hide the minimize button
+        minimizeButton.style.display = 'none';
+
+        notificationElement.addEventListener('animationend', function() {
+          // Remove animation class after animation ends
+          notificationElement.style.animation = '';
+
+          // Show the minimize button again
+          minimizeButton.style.display = 'block';
+        });
+      } else {
+        notificationElement.style.display = 'none';
+      }
+    }
+
+    // Example usage
+    receiveMessage('Alfonso', 'Hello!');
+    // Simulating receiving a message after 2 seconds
+    setTimeout(function() {
+      receiveMessage('Joe', "Sup!");
+    }, 2000);
 
           </script>
         </body>
