@@ -490,16 +490,6 @@ input[type="text"] {
         </label>
     </div>
 
-    <div>
-      <label for="receivedMessages">Received Messages:</label>
-      <textarea id="receivedMessages" readonly></textarea>
-    </div>
-  
-    <div>
-      <label for="messageInput">Message:</label>
-      <input type="text" id="messageInput">
-      <button id="sendButton">Send</button>
-    </div>
 
     <div class="chat-container" id="chatContainer">
       <div class="chat-header" onclick="toggleChat()">
@@ -1144,62 +1134,40 @@ function maximizeNames() {
 }
 
 
-
-
-    const socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
-    const receivedMessagesTextarea = document.getElementById('receivedMessages');
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
-
-    // Function to add a message to the received messages textarea
-    function addMessageToReceivedMessages(message) {
-      if (message.startsWith('Sent: ')) {
-        message = message.substring('Sent: '.length);
-        const messageObj = JSON.parse(message);
-        const content = messageObj.message;
-        receivedMessagesTextarea.value += "You: " + content + '\n';
-
-      }else{
-        receivedMessagesTextarea.value += "Emmy: " + message + '\n';
-      }
-    }
-
-    // Event listener for receiving messages on the WebSocket
-    socket.onmessage = (event) => {
-      const message = event.data;
-      addMessageToReceivedMessages(message);
-    };
-
-    // Function to send a message on the WebSocket
-    function sendMessage() {
-      const message = messageInput.value.trim();
-      if (message !== '') {
-        const formattedMessage = JSON.stringify({
-          action: 'sendmessage',
-          message: message
-        });
-        socket.send(formattedMessage);
-        addMessageToReceivedMessages('Sent: ' + formattedMessage);
-        messageInput.value = '';
-      }
-    }
-
-    // Attach event listeners to the button and input field
-    sendButton.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        sendMessage();
-      }
-    });
-
-    window.addEventListener('beforeunload', () => {
+window.addEventListener('beforeunload', () => {
       socket.close();
       setCookie('parentColsNames',parentColsNames,1);
       setCookie('allPlayerScoresArray',allPlayerScoresArray,1);
     });
 
-
     //js for chat window
+
+
+    function parseString(inputString) {
+      const regex = /^(.*?)(?:\[(.*?)\])?:\s(.*?)$/;
+      const match = inputString.match(regex);
+      
+      if (match) {
+        const username = match[1];
+        const groupId = match[2];
+        const messageReceived = match[3];
+        
+        return { username, groupId, messageReceived };
+      }
+      
+      return null;
+    }
+
+   const socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
+
+   // Event listener for receiving messages on the WebSocket
+   socket.onmessage = (event) => {
+      const message = event.data;    
+      
+      const { username, groupId, messageReceived } = parseString(message);
+      receiveMessage(username, messageReceived);
+    };
+
 
     var currentUser = 'John'; // Change this to the current user's name
     var unreadMessages = 0; // Variable to keep track of unread messages
@@ -1234,6 +1202,12 @@ function maximizeNames() {
         var messageElement = document.createElement('div');
         messageElement.className = 'message sent';
         messageElement.innerHTML = '<span class="sender">You:</span><span class="content">' + message + '</span>';
+
+        const formattedMessage = JSON.stringify({
+          action: 'sendmessage',
+          message: message
+        });
+        socket.send(formattedMessage);
 
         chatBody.appendChild(messageElement);
         chatBody.scrollTop = chatBody.scrollHeight;
