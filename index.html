@@ -1153,15 +1153,17 @@ function maximizeNames() {
     }
 
 
-   var socket = null; // Declare the socket variable
+   var socket = null; // DeinitWebSocketclare the socket variable
+   var lastMsgId = null;
 
-  function initWebSocket() {
+  function () {
     // Create a new WebSocket instance
     socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
 
     // Add event listeners to handle WebSocket events
     socket.addEventListener('open', function () {
       console.log('WebSocket connection established');
+      requestMessageUpdate("4321");
     });
 
     socket.addEventListener('close', function () {
@@ -1175,23 +1177,40 @@ function maximizeNames() {
     socket.addEventListener('message', function (event) {
       console.log('Received message:', event.data);
       // Handle received message here
-      const message = event.data;    
+      const response = JSON.parse(event.data);
+      const { message, greatestMsgId, code } = response;  
       
-      const { username, groupId, messageReceived } = parseString(message);
-      receiveMessage(username, messageReceived);
+
+      switch(code){
+        case "MESSAGES_UPDATE":
+          response.messages.forEach(messageObj => {
+            const msg = JSON.parse(messageObj.message).message;//TODO store the latest msgId so we can use it for later requests
+            const { username, groupId, messageReceived } = parseString(msg);
+            receiveMessage(username, messageReceived);
+          });
+          lastMsgId = greatestMsgId;
+          console.log("last msg id: " + lastMsgId);
+
+          break;
+        case "MSG":
+        default:
+          const { username, groupId, messageReceived } = parseString(message);
+          receiveMessage(username, messageReceived);
+      }
+      
     });
   }
 
   function handleVisibilityChange() {
   if (document.visibilityState === 'visible' && socket && socket.readyState !== WebSocket.OPEN) {
     // If the page becomes visible and WebSocket connection is not open, establish the connection
-    initWebSocket();
+    //initWebSocket();
   }
 }
 
 document.addEventListener('visibilitychange', handleVisibilityChange);
 
-initWebSocket();
+//initWebSocket();
 
 
     var currentUser = 'John'; // Change this to the current user's name
@@ -1233,7 +1252,27 @@ initWebSocket();
           message: message
         });
         
-        if (socket.readyState === WebSocket.OPEN) {
+        sendFormattedMessageToSocket(formattedMessage);
+
+
+        chatBody.appendChild(messageElement);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        messageInput.value = '';
+      }
+    }
+
+    function requestMessageUpdate(groupId_){
+      const formattedMessage = JSON.stringify({
+          action: 'getMessages',
+          groupId: groupId_
+        });
+
+      sendFormattedMessageToSocket(formattedMessage);
+    }
+
+    function sendFormattedMessageToSocket(formattedMessage){
+      if (socket.readyState === WebSocket.OPEN) {
           // If the WebSocket connection is open, send the message
           socket.send(formattedMessage);
         } else {
@@ -1246,13 +1285,6 @@ initWebSocket();
             socket.send(formattedMessage);
           });
         }
-
-
-        chatBody.appendChild(messageElement);
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        messageInput.value = '';
-      }
     }
 
     function handleKeyDown(event) {
