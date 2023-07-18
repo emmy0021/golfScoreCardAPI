@@ -1136,21 +1136,21 @@ function maximizeNames() {
 
     //js for chat window
 
+  function parseString(inputString) {
+    const regex = /^(.*?)(?:\[(.*?)\])?\{(.+?)\}:\s(.*)$/;
+    const match = inputString.match(regex);
 
-    function parseString(inputString) {
-      const regex = /^(.*?)(?:\[(.*?)\])?:\s(.*?)$/;
-      const match = inputString.match(regex);
-      
-      if (match) {
-        const username = match[1];
-        const groupId = match[2];
-        const messageReceived = match[3];
-        
-        return { username, groupId, messageReceived };
-      }
-      
-      return null;
+    if (match) {
+      const username = match[1];
+      const groupId = match[2];
+      const messageId = match[3];
+      const messageReceived = match[4];
+
+      return { username, groupId, messageId, messageReceived };
     }
+
+    return null;
+  }
 
 
    var socket = null; // DeinitWebSocketclare the socket variable
@@ -1187,18 +1187,21 @@ function maximizeNames() {
         case "MESSAGES_UPDATE":
           response.messages.forEach(messageObj => {
             const msg = JSON.parse(messageObj.message).message;//TODO store the latest msgId so we can use it for later requests
-            const { username, groupId, messageReceived } = parseString(msg);
+            const { username, groupId, messageId, messageReceived } = parseString(msg);
             receiveMessage(username, messageReceived);
           });
           lastMsgId = greatestMsgId;
-          console.log("last msg id: " + lastMsgId);
 
           break;
         case "MSG":
         default:
-          const { username, groupId, messageReceived } = parseString(message);
+          const { username, groupId, messageId, messageReceived } = parseString(message);
+          lastMsgId = messageId;
           receiveMessage(username, messageReceived);
       }
+
+      console.log("last msg id: " + lastMsgId);
+
       
     });
   }
