@@ -1155,15 +1155,17 @@ function maximizeNames() {
 
    var socket = null; // DeinitWebSocketclare the socket variable
    var lastMsgId = null;
+   var groupId = "4321";
 
-  function () {
+  function initWebSocket() {
     // Create a new WebSocket instance
     socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
 
     // Add event listeners to handle WebSocket events
     socket.addEventListener('open', function () {
       console.log('WebSocket connection established');
-      requestMessageUpdate("4321");
+      console.log("requestMessageUpdate invoked with groupId:" + groupId +", lastMsgId:" + lastMsgId);
+      requestMessageUpdate(groupId, lastMsgId);
     });
 
     socket.addEventListener('close', function () {
@@ -1204,13 +1206,13 @@ function maximizeNames() {
   function handleVisibilityChange() {
   if (document.visibilityState === 'visible' && socket && socket.readyState !== WebSocket.OPEN) {
     // If the page becomes visible and WebSocket connection is not open, establish the connection
-    //initWebSocket();
+    initWebSocket();
   }
 }
 
 document.addEventListener('visibilitychange', handleVisibilityChange);
 
-//initWebSocket();
+initWebSocket();
 
 
     var currentUser = 'John'; // Change this to the current user's name
@@ -1262,10 +1264,11 @@ document.addEventListener('visibilitychange', handleVisibilityChange);
       }
     }
 
-    function requestMessageUpdate(groupId_){
+    function requestMessageUpdate(groupId_, lastMsgId_){
       const formattedMessage = JSON.stringify({
           action: 'getMessages',
-          groupId: groupId_
+          groupId: groupId_,
+          msgId: lastMsgId_
         });
 
       sendFormattedMessageToSocket(formattedMessage);
