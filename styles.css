@@ -1,0 +1,56 @@
+
+.popup-form {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 200px; /* Set the height of the pop-up form */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px; /* Increase the border radius for a more rounded look */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increase the box shadow for a subtle effect */
+}
+  
+  /* Pop-up form title */
+  .popup-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  /* Text input fields */
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  /* Button container */
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Buttons */
+  button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .create-button {
+    background-color: #00539c;
+  }
+  
+  .join-button {
+    background-color: #4CAF50;
+  }
+  

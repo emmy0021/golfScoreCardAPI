@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Golf Scorecard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="styles.css">
     <style>
       /* CSS styles remain the same */
 
@@ -506,6 +507,23 @@ input[type="text"] {
       </div>
     </div>
 
+      <!-- Pop-up form container -->
+    <div class="popup-form" id="popupForm">
+      <div class="popup-content">
+        <div class="popup-title">Join a Group</div>
+        <input type="text" placeholder="Your Name">
+        <input type="text" placeholder="Group ID">
+        <div class="button-container">
+          <button class="create-button">Create Group</button>
+          <button class="join-button">Join</button>
+        </div>
+      </div>
+    </div>
+    <!-- Button to trigger the pop-up form -->
+    <button onclick="popUpForm()">Open Pop-up Form</button>
+
+    <script src="popUpForm.js"></script>
+
         <script>
             let isFinishedLoadingTable = false;
             let holesMSGDefault = 'Holes<br>10-18<span class="arrow arrow-right">';
@@ -637,6 +655,34 @@ input[type="text"] {
               calculateTotalScore(isFirst9Holes);
 
             }
+
+            function removePlayerFromTable(){
+              const tbodyExists = document.querySelector('tbody');
+
+              if (tbodyExists) {
+                while (tbodyExists.firstChild) {
+                  tbodyExists.removeChild(tbodyExists.firstChild);
+                }
+              }
+
+              playerColNamesArray = [];
+            }
+
+            function refreshLivePlayerScores(scores){
+
+              removePlayerFromTable();
+              allPlayerScoresArray = [];
+
+              for (const item of scores) {
+                const { userName, scores } = item;
+                const scoresArray = JSON.parse(scores);
+                insertPlayer(userName, scoresArray);
+              }
+
+              console.log("allPlayerScoresArray");
+                console.log(allPlayerScoresArray);
+            }
+
             let playerColNamesArray = []
 
             function insertPlayer(playerName, scoresArray, bringFocus = false) {
@@ -1166,6 +1212,7 @@ function maximizeNames() {
       console.log('WebSocket connection established');
       console.log("requestMessageUpdate invoked with groupId:" + groupId +", lastMsgId:" + lastMsgId);
       requestMessageUpdate(groupId, lastMsgId);
+      requestScoresUpdate(groupId);
     });
 
     socket.addEventListener('close', function () {
@@ -1180,10 +1227,16 @@ function maximizeNames() {
       console.log('Received message:', event.data);
       // Handle received message here
       const response = JSON.parse(event.data);
-      const { message, greatestMsgId, code } = response;  
+      const { message, greatestMsgId, code, scores } = response;  
       
 
       switch(code){
+        case "ALL_SCORES":
+          //put in allPlayerScoresArray
+          console.log("scores received");
+          console.log(scores);
+          refreshLivePlayerScores(scores);
+          break;
         case "MESSAGES_UPDATE":
           response.messages.forEach(messageObj => {
             const msg = JSON.parse(messageObj.message).message;//TODO store the latest msgId so we can use it for later requests
@@ -1268,10 +1321,20 @@ initWebSocket();
     }
 
     function requestMessageUpdate(groupId_, lastMsgId_){
+      console.log("requestMessageUpdate invoked");
       const formattedMessage = JSON.stringify({
           action: 'getMessages',
           groupId: groupId_,
           msgId: lastMsgId_
+        });
+
+      sendFormattedMessageToSocket(formattedMessage);
+    }
+
+    function requestScoresUpdate(groupId_){
+      const formattedMessage = JSON.stringify({
+          action: 'getScores',
+          groupId: groupId_
         });
 
       sendFormattedMessageToSocket(formattedMessage);
