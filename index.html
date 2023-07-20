@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Golf Scorecard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="styles.css">
     <style>
       /* CSS styles remain the same */
 
@@ -473,6 +472,8 @@ input[type="text"] {
     }
 
     </style>
+
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <div class="scorecard-container">
@@ -508,19 +509,26 @@ input[type="text"] {
     </div>
 
       <!-- Pop-up form container -->
-    <div class="popup-form" id="popupForm">
-      <div class="popup-content">
-        <div class="popup-title">Join a Group</div>
-        <input type="text" placeholder="Your Name">
-        <input type="text" placeholder="Group ID">
-        <div class="button-container">
-          <button class="create-button">Create Group</button>
-          <button class="join-button">Join</button>
+      <div class="popup-form" id="popupForm">
+        <div class="popup-content">
+          <div class="popup-title">Join a Group</div>
+          <div class="form-group">
+            <label for="nameInput">Your Name</label>
+            <input type="text" id="nameInput">
+          </div>
+          <div class="form-group">
+            <label for="groupIDInput">Group ID</label>
+            <input type="text" id="groupIDInput">
+          </div>
+          <div class="button-container">
+            <button class="create-button" onclick="closePopUpForm()">Create Group</button>
+            <button class="join-button" onclick="closePopUpForm()">Join</button>
+          </div>
         </div>
       </div>
-    </div>
+      
     <!-- Button to trigger the pop-up form -->
-    <button onclick="popUpForm()">Open Pop-up Form</button>
+    <button class="open-join-form-button" onclick="popUpForm()">Join a Group</button>
 
     <script src="popUpForm.js"></script>
 

@@ -6,7 +6,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 300px;
-  height: 200px; /* Set the height of the pop-up form */
+  height: 240px; /* Set the height of the pop-up form */
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 10px; /* Increase the border radius for a more rounded look */
@@ -25,7 +25,6 @@
   input[type="text"] {
     width: 100%;
     padding: 8px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
@@ -39,11 +38,18 @@
   
   /* Buttons */
   button {
-    padding: 8px 20px;
+    padding: 12px 24px;
     border: none;
     border-radius: 5px;
     color: #fff;
     cursor: pointer;
+    background-color: #a2c7d5;
+    font-size: 18px;
+    
+  }
+
+  .open-join-form-button{
+    margin-left: 8px;
   }
   
   .create-button {
@@ -52,5 +58,28 @@
   
   .join-button {
     background-color: #4CAF50;
+  }
+  
+  /* Add these styles to create the animated effect */
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: all 0.2s ease;
+    color: #888;
+  }
+  
+  .form-group input[type="text"]:focus + label,
+  .form-group input[type="text"]:valid + label {
+    top: 0;
+    font-size: 14px;
+    color: #000;
   }
   
