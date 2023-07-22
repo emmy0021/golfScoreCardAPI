@@ -522,7 +522,7 @@ input[type="text"] {
           </div>
           <div class="button-container">
             <button class="create-button" onclick="closePopUpForm()">Create Group</button>
-            <button class="join-button" onclick="closePopUpForm()">Join</button>
+            <button class="join-button" onclick="initWebSocket()">Join</button>
           </div>
         </div>
       </div>
@@ -1210,8 +1210,20 @@ function maximizeNames() {
    var socket = null; // DeinitWebSocketclare the socket variable
    var lastMsgId = null;
    var groupId = "4321";
+   var userName = "John";
+
+ 
 
   function initWebSocket() {
+    closePopUpForm();
+
+    const nameInput = document.getElementById("nameInput");
+    userName =  nameInput.value;
+
+    const groupIDInput = document.getElementById("groupIDInput");
+    groupId = groupIDInput.value;
+
+
     // Create a new WebSocket instance
     socket = new WebSocket('wss://k7k7sn2xyd.execute-api.us-east-2.amazonaws.com/production');
 
@@ -1219,8 +1231,18 @@ function maximizeNames() {
     socket.addEventListener('open', function () {
       console.log('WebSocket connection established');
       console.log("requestMessageUpdate invoked with groupId:" + groupId +", lastMsgId:" + lastMsgId);
-      requestMessageUpdate(groupId, lastMsgId);
+      //sendScoresUpdate([5]);
+      setGroupId(groupId);
+      setUserName(userName);
+
+      setTimeout(() => {
+        requestMessageUpdate(groupId, lastMsgId);
+      }, 800);
+      setTimeout(() => {
       requestScoresUpdate(groupId);
+      }, 1000);
+
+      
     });
 
     socket.addEventListener('close', function () {
@@ -1245,11 +1267,25 @@ function maximizeNames() {
           console.log(scores);
           refreshLivePlayerScores(scores);
           break;
+        case "PLAYER_SCORE_UPDATE":
+          console.log("PLAYER_SCORE_UPDATE");
+          console.log(message);
+          break;
         case "MESSAGES_UPDATE":
           response.messages.forEach(messageObj => {
-            const msg = JSON.parse(messageObj.message).message;//TODO store the latest msgId so we can use it for later requests
-            const { username, groupId, messageId, messageReceived } = parseString(msg);
-            receiveMessage(username, messageReceived);
+            const fullMessage = JSON.parse(messageObj.message);
+            const msgCode = fullMessage.code;
+            
+            switch(msgCode){
+              case "MSG":
+                const msg = fullMessage.message;
+                const { username, groupId, messageId, messageReceived } = parseString(msg);
+                receiveMessage(username, messageReceived);
+                break;
+              case "PLAYER_SCORE_UPDATE":
+              default:
+            }
+            
           });
           lastMsgId = greatestMsgId;
 
@@ -1276,7 +1312,7 @@ function maximizeNames() {
 
 document.addEventListener('visibilitychange', handleVisibilityChange);
 
-initWebSocket();
+//initWebSocket();
 
 
     var currentUser = 'John'; // Change this to the current user's name
@@ -1343,6 +1379,33 @@ initWebSocket();
       const formattedMessage = JSON.stringify({
           action: 'getScores',
           groupId: groupId_
+        });
+
+      sendFormattedMessageToSocket(formattedMessage);
+    }
+
+    function sendScoresUpdate(score){
+      const formattedMessage = JSON.stringify({
+          action: 'setScores',
+          scores: score
+        });
+
+      sendFormattedMessageToSocket(formattedMessage);
+    }
+
+    function setGroupId(groupId_){
+      const formattedMessage = JSON.stringify({
+          action: 'setGroupId',
+          groupId: groupId_
+        });
+
+      sendFormattedMessageToSocket(formattedMessage);
+    }
+
+    function setUserName(userName_){
+      const formattedMessage = JSON.stringify({
+          action: 'setUserName',
+          userName: userName_
         });
 
       sendFormattedMessageToSocket(formattedMessage);
