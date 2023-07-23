@@ -512,16 +512,20 @@ input[type="text"] {
       <div class="popup-form" id="popupForm">
         <div class="popup-content">
           <div class="popup-title">Join a Group</div>
+          <div class="popup-close" onclick="closePopUpForm()">
+            <p>X</p>
+          </div>
           <div class="form-group">
             <label for="nameInput">Your Name</label>
             <input type="text" id="nameInput">
+            <div class="error-message" id="errorMessage">Username already exists!</div>
           </div>
           <div class="form-group">
             <label for="groupIDInput">Group ID</label>
             <input type="text" id="groupIDInput">
           </div>
           <div class="button-container">
-            <button class="create-button" onclick="closePopUpForm()">Create Group</button>
+            <button class="create-button" id="createButton" onclick="closePopUpForm()">Create Group</button>
             <button class="join-button" onclick="initWebSocket()">Join</button>
           </div>
         </div>
@@ -1254,9 +1258,18 @@ function maximizeNames() {
     });
 
     socket.addEventListener('message', function (event) {
-      console.log('Received message:', event.data);
       // Handle received message here
       const response = JSON.parse(event.data);
+      console.log('Received message:', response);
+      console.log("statusCode: " + response.statusCode);
+
+      if(response.statusCode === 409){
+        hideCreateButton();
+        popUpForm();
+        showErrorMessage();
+        
+      }
+
       const { message, greatestMsgId, code, scores } = response;  
       
 
