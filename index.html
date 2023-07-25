@@ -1358,13 +1358,17 @@ function maximizeNames() {
 
 
 
+      /*setTimeout(() => {
+        sendScoresUpdate();//TODO remove and make the lambda function that connects do the work instead
+      }, 500);*/
       setTimeout(() => {
-        sendScoresUpdate();
+        requestScoresUpdate(groupId);
+      }, 650);
+
+      setTimeout(() => {
         requestMessageUpdate(groupId, lastMsgId);
-      }, 600);
-      setTimeout(() => {
-      requestScoresUpdate(groupId);
-      }, 700);
+      }, 800);
+
 
       
     });
@@ -1410,6 +1414,7 @@ function maximizeNames() {
 
           break;
         case "MESSAGES_UPDATE":
+          let isScoresUpdated = false;
           response.messages.forEach(messageObj => {
             const fullMessage = JSON.parse(messageObj.message);
             const msgCode = fullMessage.code;
@@ -1421,6 +1426,10 @@ function maximizeNames() {
                 receiveMessage(username, messageReceived);
                 break;
               case "PLAYER_SCORE_UPDATE":
+                if(!isScoresUpdated){
+                  requestScoresUpdate(groupId);
+                  isScoresUpdated = !isScoresUpdated;
+                }
               default:
             }
             
@@ -1445,6 +1454,11 @@ function maximizeNames() {
   if (document.visibilityState === 'visible' && socket && socket.readyState !== WebSocket.OPEN) {
     // If the page becomes visible and WebSocket connection is not open, establish the connection
     initWebSocket();
+  }else{
+        requestScoresUpdate(groupId);
+      setTimeout(() => {
+        requestMessageUpdate(groupId, lastMsgId);
+      }, 150);
   }
 }
 
