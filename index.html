@@ -1355,15 +1355,16 @@ function maximizeNames() {
       console.log("requestMessageUpdate invoked with groupId:" + groupId +", lastMsgId:" + lastMsgId);
       setGroupId(groupId);
       setUserName(userName);
-      sendScoresUpdate();
+
 
 
       setTimeout(() => {
+        sendScoresUpdate();
         requestMessageUpdate(groupId, lastMsgId);
-      }, 800);
+      }, 600);
       setTimeout(() => {
       requestScoresUpdate(groupId);
-      }, 1000);
+      }, 700);
 
       
     });
