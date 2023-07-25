@@ -791,6 +791,51 @@ input[type="text"] {
                 isFinishedLoadingTable = true;
             }
 
+            function updatePlayer(playerName, scoresArray) {
+              initPlayerColListeners();
+              // Fill the input scoresArray with 0s to make it a fixed length of 18
+            const fixedLengthArray = new Array(18).fill(0);
+            for (let i = 0; i < scoresArray.length && i < 18; i++) {
+              fixedLengthArray[i] = scoresArray[i];
+            }
+
+            // If switchHolesToggle is true, use the first 9 values; otherwise, use the last 9 values
+            const targetScores = switchHolesToggle ? fixedLengthArray.slice(0, 9) : fixedLengthArray.slice(9);
+
+            // Find the index of the player in the parentColsNames array
+            const playerIndex = parentColsNames.indexOf(playerName);
+
+            // If the player exists in the parentColsNames array, update their scores
+            if (playerIndex !== -1) {
+              allPlayerScoresArray[playerIndex-1]= fixedLengthArray;
+            } else {
+              // If the player does not exist, call the insertPlayer function
+              insertPlayer(playerName, fixedLengthArray);
+              return;
+            }
+
+            // Update the UI with the new scores
+            const tableContainer = document.querySelector('.table-container');
+            const tbody = tableContainer.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+            const targetRow = Array.from(rows).find((row) => {
+              const playerNameCell = row.querySelector('.player-col');
+              return playerNameCell && playerNameCell.textContent.trim() === playerName;
+            });
+
+            // Update the score cells in the row
+            if (targetRow) {
+              const scoreCells = targetRow.querySelectorAll('td:not(.player-col, .total-score-col)');
+              for (let i = 0; i < targetScores.length; i++) {
+                const scoreCell = scoreCells[i];
+                const scoreInput = scoreCell.querySelector('input');
+                scoreInput.value = targetScores[i];
+              }
+            }
+          }
+
+
+
 
 
 
@@ -1210,6 +1255,31 @@ function maximizeNames() {
     return null;
   }
 
+  function parseScore(message) {
+    const regex = /\[(.*?)]{(\d+)}:\s*(\[.*?\])/;
+    const matches = message.match(regex);
+
+    if (!matches || matches.length < 4) {
+      return null; // Invalid message format
+    }
+
+    const userName = matches[1].trim();
+    const timeStamp = matches[2].trim();
+    const scoreString = matches[3].replace(/\s+/g, ""); // Remove any spaces from the scoreString
+
+    // Convert the scoreString to an array
+    let scores = [];
+    if (scoreString) {
+      scores = scoreString.slice(1, -1).split(",").map(Number);
+    }
+
+    return {
+      userName: userName.trim(),
+      timeStamp: timeStamp.trim(),
+      scores: scores,
+    };
+  }
+
 
    var socket = null; // DeinitWebSocketclare the socket variable
    var lastMsgId = null;
@@ -1283,6 +1353,11 @@ function maximizeNames() {
         case "PLAYER_SCORE_UPDATE":
           console.log("PLAYER_SCORE_UPDATE");
           console.log(message);
+          const parsedMessage = parseScore(message);
+
+          updatePlayer(parsedMessage.userName,parsedMessage.scores);
+          
+
           break;
         case "MESSAGES_UPDATE":
           response.messages.forEach(messageObj => {
