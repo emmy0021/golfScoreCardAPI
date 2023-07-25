@@ -1353,9 +1353,10 @@ function maximizeNames() {
     socket.addEventListener('open', function () {
       console.log('WebSocket connection established');
       console.log("requestMessageUpdate invoked with groupId:" + groupId +", lastMsgId:" + lastMsgId);
-      //sendScoresUpdate([5]);
       setGroupId(groupId);
       setUserName(userName);
+      sendScoresUpdate();
+
 
       setTimeout(() => {
         requestMessageUpdate(groupId, lastMsgId);
@@ -1520,7 +1521,7 @@ document.addEventListener('visibilitychange', handleVisibilityChange);
       sendFormattedMessageToSocket(formattedMessage);
     }
 
-    function sendScoresUpdate(score){
+    function sendScoresUpdate(score = ''){
       const formattedMessage = JSON.stringify({
           action: 'setScores',
           scores: '['+score+']'
