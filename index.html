@@ -1332,6 +1332,7 @@ function maximizeNames() {
    var socket = null; // DeinitWebSocketclare the socket variable
    var lastMsgId = null;
    var groupId = "4321";
+   var thisGroupId = groupId;
    var userName = "John";
 
  
@@ -1427,7 +1428,7 @@ function maximizeNames() {
                 break;
               case "PLAYER_SCORE_UPDATE":
                 if(!isScoresUpdated){
-                  requestScoresUpdate(groupId);
+                  requestScoresUpdate(thisGroupId);
                   isScoresUpdated = !isScoresUpdated;
                 }
               default:
