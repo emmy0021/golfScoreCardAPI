@@ -681,7 +681,7 @@ input[type="text"] {
             }
 
             function refreshLivePlayerScores(scores){
-
+              
               removePlayerFromTable();
               allPlayerScoresArray = [];
 
@@ -695,7 +695,40 @@ input[type="text"] {
                 console.log(allPlayerScoresArray);
             }
 
-            let playerColNamesArray = []
+            let playerColNamesArray = [];
+
+            function sendScoreUpdate() {
+              const targetRow = event.target.closest('tr');
+
+              const scoreInputs = targetRow.querySelectorAll('input[type="number"]');
+
+              const scoresArray = Array.from(scoreInputs).map(scoreInput => {
+                const score = parseInt(scoreInput.value.trim(), 10);
+                return isNaN(score) ? 0 : score;
+              });
+
+              console.log(scoresArray);
+              initPlayerColListeners();
+              const playerIndex = parentColsNames.indexOf(userName)-1;
+              
+              console.log("player score at index " + playerIndex);
+
+              if(switchHolesToggle){
+                  for(let ix = 0; ix<scoresArray.length;ix++){
+                    allPlayerScoresArray[playerIndex][ix] = scoresArray[ix];
+                  }
+              }else{
+                for(let ix = 9; ix<scoresArray.length;ix++){
+                    allPlayerScoresArray[playerIndex][ix] = scoresArray[ix-9];
+                  }
+              }
+
+              
+              console.log("allPlayerScoresArray[playerIndex]!!!");
+              sendScoresUpdate(allPlayerScoresArray[playerIndex])
+
+            }
+
 
             function insertPlayer(playerName, scoresArray, bringFocus = false) {
               playerIndex = allPlayerScoresArray.length;
@@ -704,61 +737,72 @@ input[type="text"] {
                 playerColNamesArray.push(playerCol.textContent.trim());
               });
 
-              if(parentColsNames && parentColsNames.includes(playerName)){
-                playerIndex = parentColsNames.indexOf(playerName) -1;
-              }else{
+              if (parentColsNames && parentColsNames.includes(playerName)) {
+                playerIndex = parentColsNames.indexOf(playerName) - 1;
+              } else {
                 if (scoresArray.length > 0) {
                   allPlayerScoresArray.push([...scoresArray]);
                 } else {
                   allPlayerScoresArray.push([]);
                 }
-              } 
+              }
+
               // Create the <tr> element
-                const tr = document.createElement('tr');
+              const tr = document.createElement('tr');
 
-                // Create and append the player name cell
-                const playerNameCell = document.createElement('td');
-                playerNameCell.className = 'player-col';
-                playerNameCell.textContent = playerName;
-                tr.appendChild(playerNameCell);
+              // Create and append the player name cell
+              const playerNameCell = document.createElement('td');
+              playerNameCell.className = 'player-col';
+              playerNameCell.textContent = playerName;
+              tr.appendChild(playerNameCell);
 
+              // Create and append the score cells
+              for (let i = i_start - 1; i < i_end; i++) {
+                const scoreCell = document.createElement('td');
+                const scoreInput = document.createElement('input');
+                scoreInput.type = 'number';
+                scoreInput.min = '0';
+                const playerScoresArray = allPlayerScoresArray[playerIndex];
+                scoreInput.value = playerScoresArray && playerScoresArray[i] ? playerScoresArray[i] : '';
+                scoreInput.pattern = '[0-9]*';
+                scoreInput.id = 'number-input';
+                scoreInput.oninput = function () {
+                  this.value = this.value.slice(0, 2);
+                };
 
-                
-                // Create and append the score cells
-                for (let i = i_start -1; i < i_end; i++) {
-                    const scoreCell = document.createElement('td');
-                    const scoreInput = document.createElement('input');
-                    scoreInput.type = 'number';
-                    scoreInput.min = '0';
-                    const playerScoresArray = allPlayerScoresArray[playerIndex];
-                    scoreInput.value = playerScoresArray && playerScoresArray[i] ? playerScoresArray[i] : '';
-                    scoreInput.pattern = '[0-9]*';
-                    scoreInput.id = 'number-input';
-                    scoreInput.oninput = function () {
-                    this.value = this.value.slice(0, 2);
-                    };
-                    scoreCell.appendChild(scoreInput);
-                    tr.appendChild(scoreCell);
+                // If global variable userName is equal to playerName, make the input editable
+                if (userName === playerName) {// TODO fic bug this creates. it doesnt let you edit scores in offline mode
+                  scoreInput.readOnly = false;
+
+                  scoreInput.addEventListener('blur', sendScoreUpdate);
+                } else {
+                  scoreInput.readOnly = true;
                 }
 
-                // Create and append the total score cell
-                const totalScoreCell = document.createElement('td');
-                totalScoreCell.className = 'total-score-col';
-                totalScoreCell.textContent = '0';
-                tr.appendChild(totalScoreCell);
+                scoreCell.appendChild(scoreInput);
+                tr.appendChild(scoreCell);
+              }
 
-                // Get the table container
-                const tableContainer = document.querySelector('.table-container');
+              // Create and append the total score cell
+              const totalScoreCell = document.createElement('td');
+              totalScoreCell.className = 'total-score-col';
+              totalScoreCell.textContent = '0';
+              tr.appendChild(totalScoreCell);
 
-                // Get the tbody within the container
-                const tbody = tableContainer.querySelector('tbody');
+              // Get the table container
+              const tableContainer = document.querySelector('.table-container');
 
-                // Append the row to the tbody
-                tbody.appendChild(tr);
-                if(bringFocus){
-                  activateEditMode( tr.querySelectorAll('.player-col')[0] );
-                }
+              // Get the tbody within the container
+              const tbody = tableContainer.querySelector('tbody');
+
+              // Append the row to the tbody
+              tbody.appendChild(tr);
+
+              if (bringFocus) {
+                activateEditMode(tr.querySelectorAll('.player-col')[0]);
+              }
             }
+
 
             function createTableFooter() {
                 // Create the <tr> element for the footer row
@@ -829,7 +873,11 @@ input[type="text"] {
               for (let i = 0; i < targetScores.length; i++) {
                 const scoreCell = scoreCells[i];
                 const scoreInput = scoreCell.querySelector('input');
-                scoreInput.value = targetScores[i];
+                if (targetScores[i] === 0) {
+                  scoreInput.value = '';
+                } else {
+                  scoreInput.value = targetScores[i];
+                }
               }
             }
           }
@@ -1475,7 +1523,7 @@ document.addEventListener('visibilitychange', handleVisibilityChange);
     function sendScoresUpdate(score){
       const formattedMessage = JSON.stringify({
           action: 'setScores',
-          scores: score
+          scores: '['+score+']'
         });
 
       sendFormattedMessageToSocket(formattedMessage);
