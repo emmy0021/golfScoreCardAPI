@@ -1284,6 +1284,22 @@ function maximizeNames() {
   });
 }
 
+function handleVisibilityChange() {
+  if (document.visibilityState === 'visible') {
+
+    if(socket && socket.readyState === WebSocket.OPEN){
+      requestScoresUpdate(groupId);
+      setTimeout(() => {
+        requestMessageUpdate(groupId, lastMsgId);
+      }, 200);
+    }else{
+      // If the page becomes visible and WebSocket connection is not open, establish the connection
+      initWebSocket();
+    }
+
+  }
+}
+
 
     //js for chat window
 
@@ -1373,8 +1389,8 @@ function maximizeNames() {
         requestMessageUpdate(groupId, lastMsgId);
       }, 600);
 
-
-      
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     });
 
     socket.addEventListener('close', function () {
@@ -1454,19 +1470,7 @@ function maximizeNames() {
     });
   }
 
-  function handleVisibilityChange() {
-  if (document.visibilityState === 'visible' && socket && socket.readyState !== WebSocket.OPEN) {
-    // If the page becomes visible and WebSocket connection is not open, establish the connection
-    initWebSocket();
-  }else{
-        requestScoresUpdate(groupId);
-      setTimeout(() => {
-        requestMessageUpdate(groupId, lastMsgId);
-      }, 200);
-  }
-}
 
-document.addEventListener('visibilitychange', handleVisibilityChange);
 
 //initWebSocket();
 
