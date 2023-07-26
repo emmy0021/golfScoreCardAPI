@@ -1354,21 +1354,24 @@ function maximizeNames() {
     socket.addEventListener('open', function () {
       console.log('WebSocket connection established');
       console.log("requestMessageUpdate invoked with groupId:" + groupId +", lastMsgId:" + lastMsgId);
-      setGroupId(groupId);
       setUserName(userName);
 
+
+      setTimeout(() => {
+      setGroupId(groupId);
+      }, 250);
 
 
       /*setTimeout(() => {
         sendScoresUpdate();//TODO remove and make the lambda function that connects do the work instead
       }, 500);*/
-      setTimeout(() => {
+      /*setTimeout(() => {
         requestScoresUpdate(groupId);
-      }, 650);
+      }, 500);*/
 
       setTimeout(() => {
         requestMessageUpdate(groupId, lastMsgId);
-      }, 800);
+      }, 600);
 
 
       
@@ -1459,7 +1462,7 @@ function maximizeNames() {
         requestScoresUpdate(groupId);
       setTimeout(() => {
         requestMessageUpdate(groupId, lastMsgId);
-      }, 150);
+      }, 200);
   }
 }
 
