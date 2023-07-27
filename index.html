@@ -1350,6 +1350,7 @@ function handleVisibilityChange() {
    var groupId = "4321";
    var thisGroupId = groupId;
    var userName = "John";
+   var sessionId = "";
 
  
 
@@ -1457,6 +1458,9 @@ function handleVisibilityChange() {
           lastMsgId = greatestMsgId;
 
           break;
+        case "SESSION_ID":
+          sessionId = message;
+          break;
         case "MSG":
         default:
           const { username, groupId, messageId, messageReceived } = parseString(message);
@@ -1556,7 +1560,8 @@ function handleVisibilityChange() {
     function setGroupId(groupId_){
       const formattedMessage = JSON.stringify({
           action: 'setGroupId',
-          groupId: groupId_
+          groupId: groupId_,
+          sessionId: sessionId
         });
 
       sendFormattedMessageToSocket(formattedMessage);
